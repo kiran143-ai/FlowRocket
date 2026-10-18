@@ -1,0 +1,81 @@
+<div class="flex min-h-screen w-full flex-col bg-canvas">
+  <a href="#main" class="sr-only z-50 rounded-md bg-white px-3 py-2 text-sm font-medium text-brand-700 focus:not-sr-only focus:fixed focus:left-3 focus:top-3">
+    Skip to content
+  </a>
+
+  <header class="sticky top-0 z-30">
+    <div class="flex h-12 items-center gap-2 bg-brand-600 px-3 text-white lg:px-4">
+      <a
+        routerLink="/"
+        aria-label="FlowRocket — Home Workspace"
+        class="focus-ring group -ml-1 flex shrink-0 items-center gap-2.5 rounded-lg py-1 pl-1 pr-2 focus-visible:ring-white focus-visible:ring-offset-brand-600">
+        <span class="grid h-8 w-8 place-items-center rounded-lg bg-white text-brand-600 shadow-sm ring-1 ring-black/5 transition-transform duration-200 group-hover:-translate-y-0.5" aria-hidden="true">
+          <lucide-icon [img]="icons.RocketIcon" class="h-[18px] w-[18px] -rotate-12" />
+        </span>
+        <span class="text-[19px] font-bold leading-none tracking-tight text-white" aria-hidden="true">Flow<span class="text-brand-100">Rocket</span></span>
+      </a>
+      <span class="mx-2 hidden h-6 w-px bg-white/25 sm:block" aria-hidden="true"></span>
+      <nav aria-label="Primary" class="flex items-center gap-0.5">
+        <button type="button" (click)="notInPrototype('Address Book')" [class]="cn(navText, 'bg-white/10')">
+          Address Book
+          <lucide-icon [img]="icons.ChevronDownIcon" class="h-4 w-4" aria-hidden="true" />
+        </button>
+        <button type="button" (click)="notInPrototype('Documents')" [class]="cn(navText, 'hidden md:inline-flex')">Documents</button>
+        <button type="button" (click)="notInPrototype('Calendar')" [class]="cn(navText, 'hidden md:inline-flex')">Calendar</button>
+        <button type="button" (click)="notInPrototype('Tools')" [class]="cn(navText, 'hidden md:inline-flex')">Tools</button>
+        <button appIconButton="hidden md:inline-flex" label="Create new" variant="onBrand" [icon]="icons.CirclePlusIcon" (click)="notInPrototype('Create new')"></button>
+      </nav>
+
+      <form role="search" class="relative mx-auto hidden w-full max-w-md flex-1 md:block" (submit)="$event.preventDefault()">
+        <label for="global-search" class="sr-only">Search FlowRocket</label>
+        <lucide-icon [img]="icons.SearchIcon" class="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" aria-hidden="true" />
+        <input
+          id="global-search"
+          type="search"
+          placeholder="Search..."
+          class="h-8 w-full rounded-md border border-transparent bg-white pl-8 pr-8 text-sm text-ink-900 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-600" />
+        <lucide-icon [img]="icons.ChevronDownIcon" class="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-500" aria-hidden="true" />
+      </form>
+
+      <div class="ml-auto flex items-center gap-0.5 md:ml-0">
+        <button appIconButton label="Reports" variant="onBrand" [icon]="icons.ChartLineIcon" routerLink="/reports"></button>
+        <button appIconButton label="Display" variant="onBrand" [icon]="icons.MonitorIcon" (click)="notInPrototype('Display')"></button>
+        <span class="ml-1 hidden items-center gap-1.5 px-1.5 text-sm font-medium sm:inline-flex">
+          <lucide-icon [img]="icons.UserIcon" class="h-4 w-4" aria-hidden="true" />
+          Lauren McKenna
+        </span>
+        <button appIconButton label="Sign out" variant="onBrand" [icon]="icons.LogOutIcon" (click)="notInPrototype('Sign out')"></button>
+      </div>
+    </div>
+
+    <div class="flex h-10 items-center justify-between gap-2 bg-brand-700 px-3 text-white lg:px-4">
+      <nav aria-label="Workspace" class="flex items-center gap-0.5">
+        <a routerLink="/" [class]="subNav(onHome())" [attr.aria-current]="onHome() ? 'page' : null">
+          <lucide-icon [img]="icons.HouseIcon" class="h-4 w-4" aria-hidden="true" />
+          Home Workspace
+        </a>
+        <span class="h-4 w-px bg-white/30" aria-hidden="true"></span>
+        <a routerLink="/reports" [class]="subNav(onReports())" [attr.aria-current]="onReports() ? 'page' : null">
+          <lucide-icon [img]="icons.ChartLineIcon" class="h-4 w-4" aria-hidden="true" />
+          Reports
+        </a>
+      </nav>
+      <div class="flex items-center gap-0.5">
+        <a routerLink="/design-system" [class]="subNav(onDesignSystem())" [attr.aria-current]="onDesignSystem() ? 'page' : null">
+          <lucide-icon [img]="icons.PaletteIcon" class="h-4 w-4" aria-hidden="true" />
+          <span class="hidden sm:inline">Design System</span>
+        </a>
+        <span class="mx-1 h-4 w-px bg-white/30" aria-hidden="true"></span>
+        <button appIconButton="focus-visible:ring-offset-brand-700" label="Lists" variant="onBrand" size="sm" [icon]="icons.ListIcon" (click)="notInPrototype('Lists')"></button>
+        <button appIconButton="focus-visible:ring-offset-brand-700" label="Chat" variant="onBrand" size="sm" [icon]="icons.MessageCircleIcon" (click)="notInPrototype('Chat')"></button>
+        <button appIconButton="focus-visible:ring-offset-brand-700" label="Notifications, 0 unread" variant="onBrand" size="sm" [icon]="icons.BellIcon" (click)="notify()">
+          <span class="absolute -right-0.5 -top-0.5 grid h-4 min-w-[16px] place-items-center rounded-full bg-warning-500 px-1 text-[10px] font-bold leading-none text-ink-900" aria-hidden="true">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="flex-1">
+    <router-outlet />
+  </main>
+</div>

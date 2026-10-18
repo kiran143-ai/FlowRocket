@@ -1,0 +1,47 @@
+@if (item()) {
+  <div class="flex min-h-[calc(100vh-88px)] flex-col">
+    <app-window-bar heading="My Wall" [icon]="i.MessageSquareIcon" />
+    <div class="mx-auto w-full max-w-5xl flex-1 p-4 lg:p-6">
+      <form novalidate (ngSubmit)="send()" class="rounded-lg border border-ink-200 bg-white shadow-xs">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-ink-100 px-5 py-3">
+          <h1 class="flex items-center gap-1.5 text-[15px] font-semibold text-ink-900">
+            Add New
+            <lucide-icon [img]="i.CirclePlusIcon" class="h-4 w-4 text-brand-600" aria-hidden="true" />
+          </h1>
+          <div class="flex items-center gap-1">
+            <button appButton size="sm" variant="ghost" [leadingIcon]="i.MessageSquareIcon" (click)="openWall()">Post(s)</button>
+            <button appButton size="sm" variant="ghost" [leadingIcon]="i.PlusIcon" (click)="alreadyAdding()">Add New Post</button>
+          </div>
+        </div>
+
+        <div class="space-y-5 px-5 py-5">
+          <div class="flex items-center gap-3">
+            <label for="post-on" class="text-[13px] font-medium text-ink-700">Post On</label>
+            <app-select class="w-48">
+              <select appControl id="post-on" name="postOn" [(ngModel)]="postOn">
+                @for (o of postOnOptions; track o) {
+                  <option [value]="o">{{ o }}</option>
+                }
+              </select>
+            </app-select>
+          </div>
+
+          <app-recipient-fields idPrefix="wall" [(value)]="recipients" [fromOptions]="mailboxes" [toError]="errors().to" />
+
+          <app-field label="Subject" for="wall-subject" [error]="errors().subject">
+            <input appControl="max-w-2xl" id="wall-subject" name="subject" [ngModel]="subject()" (ngModelChange)="subject.set($event)" [invalid]="!!errors().subject" [attr.aria-describedby]="errors().subject ? 'wall-subject-error' : null" />
+          </app-field>
+
+          <app-rich-text-editor id="wall-message" label="Message" [initialHtml]="quoted()" [minHeight]="240" />
+        </div>
+
+        <div class="flex justify-end gap-2 border-t border-ink-100 bg-ink-50 px-5 py-3">
+          <button appButton variant="danger" [disabled]="sending()" (click)="back()">Cancel</button>
+          <button appButton type="submit" variant="primary" [leadingIcon]="i.SendIcon" [loading]="sending()">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+} @else {
+  <app-not-found heading="Email not found" [icon]="i.MailXIcon" />
+}

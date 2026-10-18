@@ -1,0 +1,64 @@
+<div class="flex min-h-[48px] flex-wrap items-center gap-2 bg-ink-900 px-3 py-1.5 text-white">
+  <button type="button" (click)="back.emit()" [class]="'focus-ring inline-flex h-8 items-center gap-1.5 rounded-md px-2 text-[13px] font-medium text-white/90 transition-colors duration-150 hover:bg-white/10 hover:text-white ' + darkBtn">
+    <lucide-icon [img]="i.ArrowLeftIcon" class="h-4 w-4" aria-hidden="true" />
+    {{ backLabel() }}
+  </button>
+  <span class="h-5 w-px bg-white/20" aria-hidden="true"></span>
+  <button [appIconButton]="'hidden md:inline-flex ' + darkBtn" variant="onBrand" [label]="thumbs() ? 'Hide page thumbnails' : 'Show page thumbnails'" [icon]="i.PanelLeftIcon" (click)="thumbs.set(!thumbs())"></button>
+  <p class="flex min-w-0 items-center gap-1.5 text-[13px] font-medium">
+    <lucide-icon [img]="i.FileTextIcon" class="h-4 w-4 text-danger-500" aria-hidden="true" />
+    <span class="truncate">{{ fileName() }}</span>
+  </p>
+
+  <div class="mx-auto flex items-center gap-1">
+    <button [appIconButton]="darkBtn" variant="onBrand" size="sm" label="Previous page" [icon]="i.ChevronLeftIcon" [disabled]="page() <= 1" (click)="goTo(page() - 1)"></button>
+    <label for="pdf-page" class="sr-only">Page number</label>
+    <input
+      id="pdf-page"
+      [value]="draft()"
+      inputmode="numeric"
+      (input)="draft.set($any($event.target).value)"
+      (keydown.enter)="goTo(+draft() || 1)"
+      (blur)="goTo(+draft() || 1)"
+      class="h-7 w-10 rounded bg-ink-800 text-center text-[13px] tabular-nums text-white ring-1 ring-white/20 focus:outline-none focus:ring-2 focus:ring-white" />
+    <span class="text-[13px] tabular-nums text-white/80">/ {{ pageCount() }}</span>
+    <button [appIconButton]="darkBtn" variant="onBrand" size="sm" label="Next page" [icon]="i.ChevronRightIcon" [disabled]="page() >= pageCount()" (click)="goTo(page() + 1)"></button>
+    <span class="mx-1.5 h-5 w-px bg-white/20" aria-hidden="true"></span>
+    <button [appIconButton]="darkBtn" variant="onBrand" size="sm" label="Zoom out" [icon]="i.ZoomOutIcon" [disabled]="zoomIdx() <= 0" (click)="setZoom(-1)"></button>
+    <span class="w-12 text-center text-[13px] tabular-nums text-white/90" aria-live="polite">{{ zoom() }}%</span>
+    <button [appIconButton]="darkBtn" variant="onBrand" size="sm" label="Zoom in" [icon]="i.ZoomInIcon" [disabled]="zoomIdx() >= ZOOM_MAX" (click)="setZoom(1)"></button>
+  </div>
+
+  <div class="flex items-center gap-1">
+    <ng-content select="[toolbarExtra]" />
+    <button [appIconButton]="darkBtn" variant="onBrand" label="Download" [icon]="i.DownloadIcon" (click)="download.emit()"></button>
+    <button [appIconButton]="darkBtn" variant="onBrand" label="Print" [icon]="i.PrinterIcon" (click)="print()"></button>
+    <ng-content select="[toolbarAction]" />
+  </div>
+</div>
+
+<div class="flex min-h-0 flex-1">
+  @if (thumbs()) {
+    <nav aria-label="Pages" class="hidden w-44 shrink-0 space-y-4 overflow-y-auto bg-ink-800 p-4 md:block">
+      @for (p of pages(); track p) {
+        <button type="button" [attr.aria-label]="'Page ' + p" [attr.aria-current]="p === page() ? 'page' : null" (click)="goTo(p)" [class]="thumbClass(p)">
+          <span class="block aspect-[8.5/11] w-full space-y-1.5 rounded-sm bg-white p-2.5" aria-hidden="true">
+            <span class="block h-1.5 w-1/2 rounded-full bg-ink-300"></span>
+            <span class="block h-1 w-full rounded-full bg-ink-200"></span>
+            <span class="block h-1 w-5/6 rounded-full bg-ink-200"></span>
+            <span class="block h-1 w-full rounded-full bg-ink-200"></span>
+            <span class="block h-1 w-2/3 rounded-full bg-ink-200"></span>
+          </span>
+          <span class="mt-1.5 block text-xs text-white/80">{{ p }}</span>
+        </button>
+      }
+    </nav>
+  }
+  <div #scroller (scroll)="onScroll()" class="min-w-0 flex-1 overflow-auto bg-ink-700 px-4 py-6">
+    @for (p of pages(); track p) {
+      <div #pageEl role="region" [attr.aria-label]="'Page ' + p + ' of ' + pageCount()" class="mx-auto mb-6 w-[816px] scroll-mt-6 bg-white shadow-overlay" [style.zoom]="zoom() / 100">
+        <ng-container [ngTemplateOutlet]="pageTpl().template" [ngTemplateOutletContext]="{ $implicit: p }" />
+      </div>
+    }
+  </div>
+</div>

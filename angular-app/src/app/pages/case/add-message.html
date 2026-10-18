@@ -1,0 +1,94 @@
+@if (caseRecord(); as c) {
+  <app-case-layout [caseRecord]="c" [heading]="c.rating ? 'Email RA confirmation to broker' : 'Add Message'">
+    <div headerExtra class="flex items-center gap-1">
+      <button appButton size="sm" variant="ghost" [leadingIcon]="i.MessageSquareIcon" (click)="go('')">Wall</button>
+      <button appButton size="sm" variant="ghost" [leadingIcon]="i.PlusIcon" (click)="alreadyAdding()">Add New Message</button>
+    </div>
+
+    <form novalidate (ngSubmit)="send(c)" class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
+      <div class="space-y-5 rounded-lg border border-ink-200 bg-white p-5 shadow-xs">
+        <app-recipient-fields idPrefix="msg" [(value)]="recipients" [fromOptions]="mailboxes" [toError]="errors().to" />
+        <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_220px]">
+          <app-field label="Subject" for="msg-subject" [error]="errors().subject">
+            <input appControl id="msg-subject" name="subject" [ngModel]="subject()" (ngModelChange)="subject.set($event)" [invalid]="!!errors().subject" [attr.aria-describedby]="errors().subject ? 'msg-subject-error' : null" />
+          </app-field>
+          <app-field label="Category" for="msg-category">
+            <app-select>
+              <select appControl id="msg-category" name="category" [(ngModel)]="category">
+                @for (m of messageCategories; track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </app-select>
+          </app-field>
+        </div>
+
+        <div>
+          <p class="mb-1.5 text-[13px] font-medium text-ink-700">Attachments</p>
+          @if (attached()) {
+            <div class="flex items-center gap-3 rounded-md border border-ink-200 bg-ink-50 px-3 py-2">
+              <span class="grid h-9 w-9 shrink-0 place-items-center rounded bg-danger-50 text-danger-600" aria-hidden="true">
+                <lucide-icon [img]="i.FileTextIcon" class="h-4 w-4" />
+              </span>
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-[13px] font-medium text-ink-900">{{ fileName() }}</p>
+                <p class="text-xs text-ink-500">RA Confirmation Sheet · PDF · Rated age {{ c.rating?.finalRatedAge }}</p>
+              </div>
+              <button appIconButton label="Preview attachment" size="sm" [icon]="i.EyeIcon" (click)="go('/ra-sheet')"></button>
+              <button appIconButton label="Download attachment" size="sm" [icon]="i.DownloadIcon" (click)="raSheet.download(c, true)"></button>
+              <button appIconButton label="Remove attachment" size="sm" variant="danger" [icon]="i.XIcon" (click)="attached.set(false)"></button>
+            </div>
+          } @else {
+            <button appButton size="sm" [leadingIcon]="i.PaperclipIcon" [disabled]="!c.rating" (click)="attached.set(true)">
+              {{ c.rating ? 'Attach RA confirmation sheet' : 'RA sheet available after rating' }}
+            </button>
+          }
+        </div>
+
+        <app-rich-text-editor id="msg-body" label="Message" [minHeight]="220" [initialHtml]="body()" />
+        <div class="flex justify-end gap-2 border-t border-ink-100 pt-4">
+          <button appButton variant="danger" [disabled]="sending()" (click)="go('/rating')">Cancel</button>
+          <button appButton type="submit" variant="primary" [leadingIcon]="i.SendIcon" [loading]="sending()">Send</button>
+        </div>
+      </div>
+
+      <section aria-labelledby="broker-recipients" class="rounded-lg border border-ink-200 bg-white shadow-xs">
+        <h2 id="broker-recipients" class="border-b border-ink-100 px-4 py-3 text-[15px] font-semibold text-ink-900">Select Brokers Recipients</h2>
+        <app-tabs class="px-3 pt-1" idPrefix="brokers" label="Broker recipients" [items]="tabs" [(value)]="tab" />
+        <div [id]="'brokers-panel-' + tab()" role="tabpanel" [attr.aria-labelledby]="'brokers-tab-' + tab()">
+          @if (tab() === 'contacts') {
+            <app-data-table id="broker-contacts" label="Broker Contact(s)" [columns]="contactColumns" [rows]="brokerContacts" [defaultPageSize]="5" [rowId]="contactId" [searchText]="contactText">
+              <ng-template appCell="name" let-r>
+                <span class="font-medium text-brand-700">{{ r.name }} <span class="font-normal text-ink-500">({{ r.firm }})</span></span>
+              </ng-template>
+              <ng-template appCell="email" let-r>
+                <label appChoice="text-[13px]">
+                  <input type="checkbox" [class]="choiceInput" [checked]="recipients().to.includes(r.email)" (change)="toggleEmail(r.email, $any($event.target).checked)" />
+                  {{ r.email }}
+                </label>
+              </ng-template>
+              <ng-template appCell="fax" let-r>
+                @if (r.fax) {
+                  {{ r.fax }}
+                } @else {
+                  <span class="text-ink-400">—</span>
+                }
+              </ng-template>
+            </app-data-table>
+          } @else {
+            <app-data-table id="broker-firms" label="Broker Firm(s)" [columns]="firmColumns" [rows]="brokerFirms" [defaultPageSize]="5" [rowId]="firmId" [searchText]="firmText">
+              <ng-template appCell="firm" let-r>
+                <label appChoice="text-[13px] font-medium">
+                  <input type="checkbox" [class]="choiceInput" [checked]="allSelected(r.firm)" (change)="toggleFirm(r.firm, $any($event.target).checked)" />
+                  {{ r.firm }}
+                </label>
+              </ng-template>
+            </app-data-table>
+          }
+        </div>
+      </section>
+    </form>
+  </app-case-layout>
+} @else {
+  <app-not-found />
+}

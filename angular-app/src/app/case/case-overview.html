@@ -1,0 +1,78 @@
+@let c = caseRecord();
+@let r = c.rating;
+
+<section aria-labelledby="case-overview" class="overflow-hidden rounded-xl border border-ink-200 bg-white shadow-raised">
+  <div class="flex flex-wrap items-center gap-x-8 gap-y-4 p-5">
+    <div class="flex min-w-0 items-center gap-3">
+      <app-avatar [initials]="c.initials" size="lg" />
+      <div class="min-w-0">
+        <h2 id="case-overview" class="text-lg font-semibold text-ink-900">{{ c.claimantName }}</h2>
+        <p class="text-[13px] text-ink-500">
+          Case # <span class="tabular-nums">{{ c.caseNumber }}</span> · {{ c.gender }} · DOB {{ c.dob }} · {{ c.ageNow }}
+        </p>
+        @if (flags().length) {
+          <div class="mt-1.5 flex flex-wrap gap-1" aria-label="Case flags">
+            @for (f of flags(); track f) {
+              <app-badge [tone]="f === 'Rush' || f === 'Rework' ? 'warning' : 'neutral'">{{ f }}</app-badge>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <dl class="flex flex-wrap gap-x-6 gap-y-3 border-ink-100 lg:border-l lg:pl-8">
+      <div class="min-w-[88px]">
+        <dt class="text-xs text-ink-500">Final rated age</dt>
+        <dd class="mt-0.5 text-lg font-semibold tabular-nums" [class]="r ? 'text-danger-600' : 'text-ink-400'">{{ r ? r.finalRatedAge : '—' }}</dd>
+      </div>
+      <div class="min-w-[88px]">
+        <dt class="text-xs text-ink-500">Actual age</dt>
+        <dd class="mt-0.5 text-lg font-semibold tabular-nums" [class]="r ? 'text-ink-900' : 'text-ink-400'">{{ r ? r.age : '—' }}</dd>
+      </div>
+      <div class="min-w-[88px]">
+        <dt class="text-xs text-ink-500">Normal L.E.</dt>
+        <dd class="mt-0.5 text-lg font-semibold tabular-nums" [class]="r ? 'text-ink-900' : 'text-ink-400'">{{ r ? r.normalLE.toFixed(2) : '—' }}</dd>
+      </div>
+      <div class="min-w-[88px]">
+        <dt class="text-xs text-ink-500">Valid through</dt>
+        <dd class="mt-0.5 text-lg font-semibold tabular-nums" [class]="r ? 'text-ink-900' : 'text-ink-400'">{{ r ? r.expirationDate : '—' }}</dd>
+      </div>
+    </dl>
+
+    @if (r) {
+      <div class="ml-auto">
+        <button appButton size="sm" [leadingIcon]="DownloadIcon" (click)="raSheet.download(c)">RA sheet PDF</button>
+      </div>
+    }
+  </div>
+
+  <div class="grid gap-4 border-t border-ink-100 bg-ink-50/60 px-5 py-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+    <ol aria-label="Case progress" class="flex flex-wrap items-center gap-y-2">
+      @for (s of stages; track s.id; let i = $index; let last = $last) {
+        <li class="flex items-center" [attr.aria-current]="i === stageIdx() + 1 ? 'step' : null">
+          <span [class]="stepClass(i)">
+            @if (i <= stageIdx()) {
+              <lucide-icon [img]="CheckIcon" class="h-3.5 w-3.5" aria-hidden="true" />
+            } @else {
+              {{ i + 1 }}
+            }
+          </span>
+          <span [class]="labelClass(i)">
+            {{ s.label }}
+            <span class="sr-only">{{ i <= stageIdx() ? ' (done)' : i === stageIdx() + 1 ? ' (current step)' : '' }}</span>
+          </span>
+          @if (!last) {
+            <span class="mx-3 h-px w-8 sm:w-12" [class]="i < stageIdx() ? 'bg-success-500' : 'bg-ink-200'" aria-hidden="true"></span>
+          }
+        </li>
+      }
+    </ol>
+    <div class="flex items-center gap-3 rounded-md border border-brand-200 bg-white py-2 pl-3 pr-2">
+      <div class="min-w-0">
+        <p class="text-[13px] font-semibold text-ink-900">{{ next().title }}</p>
+        <p class="text-xs text-ink-500">{{ next().body }}</p>
+      </div>
+      <button appButton size="sm" [variant]="next().done ? 'secondary' : 'primary'" [leadingIcon]="next().icon" (click)="go(next().to)">{{ next().cta }}</button>
+    </div>
+  </div>
+</section>

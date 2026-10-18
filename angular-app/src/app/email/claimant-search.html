@@ -1,0 +1,73 @@
+<section aria-labelledby="claimant-search-title" class="flex h-full flex-col">
+  <div class="flex items-center justify-between gap-2 border-b border-ink-200 bg-ink-50 px-4 py-2">
+    <h2 id="claimant-search-title" class="text-sm font-semibold text-ink-900">Search Claimant</h2>
+    <button appButton size="sm" [trailingIcon]="icons.ChevronsRightIcon" (click)="newClaimant.emit()">New Claimant</button>
+  </div>
+
+  <form novalidate (ngSubmit)="search()" class="space-y-3 px-4 py-4">
+    @if (formError()) {
+      <app-alert tone="danger">{{ formError() }}</app-alert>
+    }
+    <app-field label="Claimant" for="search-claimant">
+      <input appControl id="search-claimant" name="name" [(ngModel)]="name" placeholder="Last name, first name" autocomplete="off" />
+    </app-field>
+    <div class="grid grid-cols-2 gap-3">
+      <app-field label="Claimant DOB" for="search-dob" [error]="dobError()">
+        <input appControl id="search-dob" name="dob" [(ngModel)]="dob" [invalid]="!!dobError()" [attr.aria-describedby]="dobError() ? 'search-dob-error' : null" placeholder="MM/DD/YYYY" inputmode="numeric" />
+      </app-field>
+      <app-field label="GRA/Case Number" for="search-case">
+        <input appControl id="search-case" name="caseNo" [(ngModel)]="caseNo" />
+      </app-field>
+    </div>
+    <div class="flex items-center gap-2 text-[13px] text-ink-700">
+      <label for="search-years">Records up to last</label>
+      <app-select class="w-20">
+        <select appControl controlSize="sm" id="search-years" name="years" [(ngModel)]="years">
+          <option value="all">All</option>
+          <option value="1">1</option>
+          <option value="3">3</option>
+          <option value="5">5</option>
+        </select>
+      </app-select>
+      <span>yrs</span>
+    </div>
+    <div class="flex justify-center gap-2 pt-1">
+      <button appButton type="submit" variant="primary" size="sm" [leadingIcon]="icons.SearchIcon" [loading]="status() === 'searching'">Search</button>
+      <button appButton size="sm" variant="danger" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+
+  @if (status() !== 'idle') {
+    <div class="border-t border-ink-200 pt-3">
+      <h3 class="px-4 text-sm font-semibold text-ink-900" aria-live="polite">Claimants({{ status() === 'searching' ? '…' : results().length }})</h3>
+      @if (status() === 'searching') {
+        <p class="flex items-center justify-center gap-2 py-8 text-[13px] text-ink-500">
+          <lucide-icon [img]="icons.LoaderCircleIcon" class="h-4 w-4 animate-spin" aria-hidden="true" />
+          Searching claimants…
+        </p>
+      } @else {
+        <app-data-table id="claimant-results" label="Claimants" toolbar="search" [columns]="columns" [rows]="results()" [rowId]="rowId" [searchText]="searchText">
+          <ng-template appCell="select" let-r>
+            <label appChoice [srOnly]="true">
+              <input type="radio" name="claimant-result" class="focus-ring h-4 w-4 shrink-0 cursor-pointer accent-brand-600" [checked]="selectedId() === r.id" (change)="selectedId.set(r.id)" />
+              Select {{ r.name }}
+            </label>
+          </ng-template>
+          <ng-template appCell="claimant" let-r>
+            <button type="button" class="link text-left" (click)="openClaimant.emit(r)">
+              {{ r.name }}
+              <span class="block text-xs font-normal text-ink-500">DOB {{ r.dob }} · {{ r.caseNumber }}</span>
+            </button>
+          </ng-template>
+        </app-data-table>
+        @if (!results().length) {
+          <div class="px-4"><app-alert tone="info">No existing claimant matches. Create a new claimant to continue.</app-alert></div>
+        }
+        <div class="flex justify-center gap-2 px-4 py-4">
+          <button appButton size="sm" [trailingIcon]="icons.ChevronsRightIcon" [disabled]="!selected()" (click)="openClaimant.emit(selected()!)">Next</button>
+          <button appButton size="sm" variant="primary" [trailingIcon]="icons.ChevronsRightIcon" (click)="newClaimant.emit()">New Claimant</button>
+        </div>
+      }
+    </div>
+  }
+</section>

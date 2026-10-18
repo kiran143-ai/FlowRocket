@@ -1,0 +1,90 @@
+<div class="mx-auto w-full max-w-[1600px] space-y-6 p-4 lg:p-6">
+  <div>
+    <p class="text-xs font-medium uppercase tracking-wider text-ink-400">RA confirmations</p>
+    <h1 class="mt-1 text-2xl font-semibold tracking-tight text-ink-900">Reports</h1>
+    <p class="mt-0.5 text-sm text-ink-500">Every RA confirmation sheet in one place — preview, download the PDF, or send it to the broker.</p>
+  </div>
+
+  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <app-stat-card label="RA sheets issued" [value]="rated().length" [icon]="i.FileTextIcon" tone="brand" [hint]="inUnderwriting() + (inUnderwriting() === 1 ? ' more case is' : ' more cases are') + ' still in underwriting'" />
+    <app-stat-card
+      label="Not sent to broker yet"
+      [value]="pending().length"
+      [icon]="i.HourglassIcon"
+      tone="warning"
+      hint="Rated, but the confirmation hasn’t gone out"
+      [action]="filter() === 'pending' ? 'Showing below · clear' : 'Show these'"
+      [active]="filter() === 'pending'"
+      [interactive]="true"
+      (activate)="toggle('pending')" />
+    <app-stat-card
+      label="Sent to broker"
+      [value]="sent().length"
+      [icon]="i.ClipboardCheckIcon"
+      tone="success"
+      hint="Confirmations delivered by email"
+      [action]="filter() === 'sent' ? 'Showing below · clear' : 'Show these'"
+      [active]="filter() === 'sent'"
+      [interactive]="true"
+      (activate)="toggle('sent')" />
+    <app-stat-card label="Avg. years rated up" [value]="'+' + avgUp().toFixed(1)" [icon]="i.TrendingUpIcon" tone="neutral" hint="Final rated age minus actual age" />
+  </div>
+
+  <div class="grid items-start gap-5 2xl:grid-cols-[minmax(0,1fr)_320px]">
+    <app-panel heading="RA Confirmation Sheets" [icon]="i.FileTextIcon" [count]="rows().length" bodyClass="p-0">
+      <div panelActions role="group" aria-label="Filter RA sheets" class="flex flex-wrap gap-1">
+        @for (f of filters(); track f.id) {
+          <button type="button" [attr.aria-pressed]="filter() === f.id" (click)="filter.set(f.id)" [class]="chipClass(filter() === f.id)">
+            {{ f.label }}
+            <span class="tabular-nums" [class]="filter() === f.id ? 'text-white/80' : 'text-ink-500'">{{ f.n }}</span>
+          </button>
+        }
+      </div>
+      <app-data-table id="ra-reports" label="RA Confirmation Sheets" [columns]="columns" [rows]="rows()" [defaultPageSize]="10" [rowId]="rowId" [searchText]="searchText" emptyMessage="No RA sheets match this filter.">
+        <ng-template appCell="claimant" let-c>
+          <div class="min-w-[150px]">
+            <a [routerLink]="['/case', c.caseNumber]" class="link">{{ c.claimantName }}</a>
+            <p class="text-xs tabular-nums text-ink-500">Case # {{ c.caseNumber }}</p>
+          </div>
+        </ng-template>
+        <ng-template appCell="broker" let-c>
+          <div class="min-w-[180px] max-w-[220px]">
+            <p class="font-medium text-ink-900">{{ c.broker.firm }}</p>
+            <p class="text-xs text-ink-500">{{ c.broker.contact }} · {{ c.broker.city }}</p>
+          </div>
+        </ng-template>
+        <ng-template appCell="rated" let-c>
+          <p class="text-base font-semibold tabular-nums text-ink-900">{{ c.rating.finalRatedAge }}</p>
+          <p class="whitespace-nowrap text-xs tabular-nums text-ink-500">age {{ c.rating.age }} · +{{ c.rating.finalRatedAge - c.rating.age }} yrs</p>
+        </ng-template>
+        <ng-template appCell="status" let-c><app-status-badge [status]="c.status" /></ng-template>
+        <ng-template appCell="actions" let-c>
+          <div class="flex items-center justify-end gap-0.5">
+            <button appIconButton size="sm" [label]="'Preview RA sheet for ' + c.claimantName" tip="Preview RA sheet" [icon]="i.EyeIcon" (click)="open(c, 'ra-sheet')"></button>
+            <button appIconButton size="sm" [label]="'Download ' + raFileName(c)" tip="Download PDF" [icon]="i.DownloadIcon" (click)="raSheet.download(c)"></button>
+            <button appButton="ml-1" size="sm" [variant]="c.status === 'CS Communicated' ? 'ghost' : 'primary'" [leadingIcon]="i.SendIcon" (click)="open(c, 'message')">
+              {{ c.status === 'CS Communicated' ? 'Resend' : 'Send' }}
+            </button>
+          </div>
+        </ng-template>
+      </app-data-table>
+    </app-panel>
+
+    <app-panel heading="RA sheets by broker firm">
+      <ul class="space-y-3">
+        @for (b of byBroker(); track b.firm) {
+          <li [appTooltip]="b.firm + ': ' + b.n + (b.n === 1 ? ' RA sheet' : ' RA sheets')">
+            <div class="flex items-baseline justify-between gap-3 text-[13px]">
+              <span class="truncate text-ink-700">{{ b.firm }}</span>
+              <span class="font-semibold tabular-nums text-ink-900">{{ b.n }}</span>
+            </div>
+            <div class="mt-1 h-2 rounded-full bg-ink-100" aria-hidden="true">
+              <div class="h-2 rounded-full bg-brand-500" [style.width.%]="b.pct"></div>
+            </div>
+          </li>
+        }
+      </ul>
+      <p class="mt-4 border-t border-ink-100 pt-3 text-xs text-ink-500">Counts every case with a saved rating, sent or not.</p>
+    </app-panel>
+  </div>
+</div>

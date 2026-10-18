@@ -1,0 +1,114 @@
+@if (caseRecord(); as c) {
+  @let r = c.rating;
+  <app-case-layout [caseRecord]="c" [heading]="'Rating Activity for ' + c.claimantName">
+    <button titleAction appIconButton="text-brand-600" label="Add rating activity" size="sm" [icon]="i.CirclePlusIcon" (click)="go('/rating/edit')"></button>
+
+    <div class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_400px]">
+      <app-panel heading="Rating Activity" bodyClass="p-0">
+        @if (r) {
+          <div panelActions class="flex items-center gap-1.5">
+            <button appIconButton="text-brand-700" label="Edit rating activity" size="sm" [icon]="i.SquarePenIcon" (click)="go('/rating/edit')"></button>
+            <button appIconButton label="Delete rating activity" size="sm" variant="danger" [icon]="i.Trash2Icon" (click)="confirmDelete.set(true)"></button>
+          </div>
+        }
+        @if (r) {
+
+          <div class="grid gap-6 p-5 md:grid-cols-[160px_minmax(0,1fr)]">
+            <div class="flex flex-col items-center text-center">
+              <app-avatar [initials]="c.underwriter.initials" tone="warning" size="xl" />
+              <p class="mt-3 text-sm font-semibold text-brand-700">{{ underwriterName(r.underwriter) }}</p>
+              <p class="mt-0.5 inline-flex items-center gap-1 text-xs text-ink-500">
+                <lucide-icon [img]="i.TagIcon" class="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
+                Underwriter
+              </p>
+            </div>
+            <div class="space-y-5">
+              <dl class="grid grid-cols-2 gap-x-6 gap-y-4 rounded-lg border border-brand-200 bg-brand-50/50 p-4 sm:grid-cols-5">
+                <div><dt class="text-xs font-medium text-ink-500">Age</dt><dd class="mt-0.5 text-2xl font-semibold tabular-nums text-brand-700">{{ r.age }}</dd></div>
+                <div><dt class="text-xs font-medium text-ink-500">Normal L.E.</dt><dd class="mt-0.5 text-2xl font-semibold tabular-nums text-brand-700">{{ r.normalLE.toFixed(2) }}</dd></div>
+                <div><dt class="text-xs font-medium text-ink-500">75% Normal L.E.</dt><dd class="mt-0.5 text-2xl font-semibold tabular-nums text-brand-700">{{ r.normalLE75.toFixed(2) }}</dd></div>
+                <div><dt class="text-xs font-medium text-ink-500">Estimated L.E.</dt><dd class="mt-0.5 text-2xl font-semibold tabular-nums text-warning-700">{{ r.estimatedLE.toFixed(2) }}</dd></div>
+                <div><dt class="text-xs font-medium text-ink-500">Calculated Rated Age</dt><dd class="mt-0.5 text-2xl font-semibold tabular-nums text-ink-900">{{ r.calculatedRatedAge }}</dd></div>
+                <div class="col-span-2 flex gap-8 border-t border-brand-200 pt-4 sm:col-span-5">
+                  <div><dt class="text-xs font-medium text-ink-500">Final Rated Age</dt><dd class="mt-0.5 text-3xl font-semibold tabular-nums text-danger-600">{{ r.finalRatedAge }}</dd></div>
+                  <div>
+                    <dt class="text-xs font-medium text-ink-500"># Yrs Rated Up</dt>
+                    <dd class="mt-0.5 text-3xl font-semibold tabular-nums text-ink-900">{{ r.calculatedRatedAge - r.age }} / <span class="text-danger-600">{{ r.finalRatedAge - r.age }}</span></dd>
+                  </div>
+                </div>
+              </dl>
+              <dl class="grid gap-x-8 gap-y-1.5 text-[13px] sm:grid-cols-2">
+                @for (row of [['Date Evaluated', r.dateEvaluated], ['Mult Method', r.multMethod], ['DOB', c.dob], ['Mult (%)', '' + r.mult], ['Age', '' + r.age], ['Response Date', r.responseDate], ['Gender', c.gender], ['Expiration Date', r.expirationDate]]; track row[0]) {
+                  <div class="grid grid-cols-[120px_1fr] gap-3">
+                    <dt class="text-ink-500">{{ row[0] }}</dt>
+                    <dd class="font-semibold tabular-nums text-ink-900">{{ row[1] }}</dd>
+                  </div>
+                }
+              </dl>
+            </div>
+          </div>
+          <section aria-labelledby="iv-codes" class="border-t border-ink-100 px-5 py-4">
+            <h3 id="iv-codes" class="text-sm font-semibold text-ink-900">Impairment Codes</h3>
+            <h4 class="mt-3 text-xs font-semibold text-ink-700">Primary Impairment Code</h4>
+            <p class="mt-0.5 text-[13px] text-ink-900">{{ codeLabel(r.primaryImpairmentCode) }}</p>
+            <h4 class="mt-3 text-xs font-semibold text-ink-700">Secondary Impairment Codes</h4>
+            <p class="mt-0.5 text-[13px] text-ink-500">{{ secondaryLabels(r.secondaryImpairmentCodes) }}</p>
+          </section>
+          <section aria-labelledby="iv-note" class="border-t border-ink-100 px-5 py-4">
+            <h3 id="iv-note" class="text-sm font-semibold text-ink-900">Underwriter Note</h3>
+            <p class="mt-2 whitespace-pre-line text-[13px] leading-6 text-ink-900">{{ r.note.join('\n') || '—' }}</p>
+          </section>
+        } @else {
+          <app-empty-state [icon]="i.ClipboardListIcon" heading="No rating activity yet" description="Calculate the rated age using the life expectancy table to create the first rating activity.">
+            <button appButton variant="primary" [leadingIcon]="i.CirclePlusIcon" (click)="go('/rating/edit')">Add Rating Activity</button>
+          </app-empty-state>
+        }
+      </app-panel>
+
+      <section aria-label="RA confirmation and timeline" class="rounded-lg border border-ink-200 bg-white shadow-xs">
+        <app-tabs class="px-3 pt-2" idPrefix="ra" label="Rating details" [items]="tabs" [(value)]="tab" />
+        <div [id]="'ra-panel-' + tab()" role="tabpanel" [attr.aria-labelledby]="'ra-tab-' + tab()" class="p-4">
+          @if (tab() === 'ra') {
+            <div class="flex items-center gap-1.5">
+              <h3 class="text-sm font-semibold text-ink-900">RA Confirmation Sheet</h3>
+              <button appIconButton="text-brand-600" label="Generate RA confirmation sheet" size="sm" [icon]="i.CirclePlusIcon" [disabled]="!r" (click)="go('/ra-sheet')"></button>
+            </div>
+            @if (r) {
+              <div class="mt-3 rounded-md border border-ink-200 p-3">
+                <div class="flex items-start justify-between gap-2">
+                  <a [routerLink]="['/case', c.caseNumber, 'ra-sheet']" class="link inline-flex min-w-0 items-start gap-1.5 text-[13px]">
+                    <lucide-icon [img]="i.FileTextIcon" class="mt-0.5 h-4 w-4 text-danger-600" aria-hidden="true" />
+                    <span class="break-all">{{ fileName() }}</span>
+                  </a>
+                  <div class="flex shrink-0">
+                    <button appIconButton="text-brand-700" label="Send RA to broker" size="sm" [icon]="i.ForwardIcon" (click)="go('/message')"></button>
+                    <button appIconButton="text-brand-700" [label]="'Download ' + fileName()" tip="Download PDF" size="sm" [icon]="i.DownloadIcon" (click)="raSheet.download(c)"></button>
+                  </div>
+                </div>
+                <dl class="mt-2 space-y-1 pl-5 text-[13px]">
+                  <div class="flex gap-1.5"><dt class="text-ink-500">Rated Age:</dt><dd class="font-semibold text-danger-600">{{ r.finalRatedAge }}</dd></div>
+                  <div class="flex gap-1.5"><dt class="text-ink-500">Broker Firm:</dt><dd class="font-medium">{{ c.broker.firm }}</dd></div>
+                  <div class="flex gap-1.5"><dt class="text-ink-500">Comment:</dt><dd>{{ c.raSheet?.comment || '—' }}</dd></div>
+                </dl>
+                <p class="mt-2 pl-5 text-xs text-ink-500">Created By {{ c.raSheet?.createdBy ?? c.underwriter.name }} on {{ c.raSheet?.createdOn ?? r.dateEvaluated }}</p>
+              </div>
+            } @else {
+              <p class="mt-3 text-[13px] text-ink-500">Available after the rating activity is saved.</p>
+            }
+          } @else {
+            <app-case-timeline [events]="c.timeline" (openLink)="openTimeline($event)" />
+          }
+        </div>
+      </section>
+    </div>
+  </app-case-layout>
+
+  <app-modal [open]="confirmDelete()" heading="Delete this rating activity?" description="The calculated and final rated age for this case will be removed. This can’t be undone." (closed)="confirmDelete.set(false)">
+    <div modalFooter class="contents">
+      <button appButton (click)="confirmDelete.set(false)">Cancel</button>
+      <button appButton variant="destructive" [leadingIcon]="i.Trash2Icon" (click)="deleteRating()">Delete</button>
+    </div>
+  </app-modal>
+} @else {
+  <app-not-found />
+}

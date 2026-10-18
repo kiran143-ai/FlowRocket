@@ -1,0 +1,81 @@
+@let item = inbox();
+@let mail = email();
+
+<div class="flex flex-wrap items-center justify-between gap-2 border-b border-ink-200 bg-ink-50 px-4 py-2">
+  @if (!compact()) {
+    <button appButton size="sm" variant="ghost" [leadingIcon]="i.ChevronsLeftIcon" [disabled]="!hasPrevious()" (click)="previous.emit()">Previous</button>
+  } @else {
+    <span></span>
+  }
+  <div role="group" aria-label="Email actions" class="flex flex-wrap items-center gap-1.5">
+    @if (compact()) {
+      <button appIconButton label="Reply" variant="outline" size="sm" [icon]="i.ReplyIcon" (click)="reply.emit('reply')"></button>
+      <button appIconButton label="Reply All" variant="outline" size="sm" [icon]="i.ReplyAllIcon" (click)="reply.emit('all')"></button>
+      <button appIconButton label="Forward" variant="outline" size="sm" [icon]="i.ForwardIcon" (click)="reply.emit('forward')"></button>
+      <button appIconButton="text-danger-600" label="Trash" variant="outline" size="sm" [icon]="i.Trash2Icon" (click)="trash.emit()"></button>
+    } @else {
+      <button appButton size="sm" [leadingIcon]="i.ReplyIcon" (click)="reply.emit('reply')">Reply</button>
+      <button appButton size="sm" [leadingIcon]="i.ReplyAllIcon" (click)="reply.emit('all')">Reply All</button>
+      <button appButton size="sm" [leadingIcon]="i.ForwardIcon" (click)="reply.emit('forward')">Forward</button>
+      <button appButton size="sm" variant="danger" [leadingIcon]="i.Trash2Icon" (click)="trash.emit()">Trash</button>
+    }
+  </div>
+  @if (!compact()) {
+    <button appButton size="sm" variant="ghost" [trailingIcon]="i.ChevronsRightIcon" [disabled]="!hasNext()" (click)="next.emit()">Next</button>
+  } @else if (item.replied) {
+    <app-badge tone="info" [icon]="i.ReplyIcon">Replied</app-badge>
+  } @else {
+    <span></span>
+  }
+</div>
+
+<header class="flex gap-4 border-b border-ink-100 px-5 py-5">
+  <app-avatar [initials]="initialsOf(item.fromName)" tone="danger" size="lg" />
+  <div class="min-w-0 flex-1">
+    <div class="flex flex-wrap items-center gap-2">
+      <p class="text-xs text-ink-500">{{ mail.sentAt }}</p>
+      @if (item.replied && !compact()) {
+        <app-badge tone="info" [icon]="i.ReplyIcon">Replied</app-badge>
+      }
+    </div>
+    <h2 class="mt-1 break-words text-base font-semibold text-ink-900">
+      {{ item.fromName }} <span class="font-normal text-ink-500">({{ item.fromEmail }})</span>
+    </h2>
+    <p class="mt-0.5 text-sm font-semibold text-ink-900">{{ mail.claimantLine }}</p>
+    <p class="mt-1 text-xs text-ink-500"><span class="font-medium text-ink-700">To</span> {{ mail.to }}</p>
+    @if (mail.attachments.length) {
+      <ul aria-label="Attachments" class="mt-3 flex flex-wrap gap-2">
+        @for (a of mail.attachments; track a.id) {
+          <li class="inline-flex items-center rounded-md border border-ink-200 bg-white shadow-xs">
+            <button type="button" (click)="openAttachment.emit(a)" class="focus-ring inline-flex items-center gap-1.5 rounded-l-md py-1 pl-2 pr-2.5 text-[13px] font-medium text-brand-700 transition-colors duration-150 hover:bg-brand-50">
+              <lucide-icon [img]="i.FileTextIcon" class="h-4 w-4 text-danger-600" aria-hidden="true" />
+              {{ a.name }}
+            </button>
+            <span class="h-5 w-px bg-ink-200" aria-hidden="true"></span>
+            <button appIconButton="rounded-l-none" size="sm" [label]="'Download ' + a.name" [icon]="i.DownloadIcon" (click)="download(a)"></button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</header>
+
+<div class="flex-1 space-y-4 overflow-y-auto px-5 py-5 text-sm leading-6 text-ink-900">
+  @for (lines of mail.body; track $index) {
+    <p>
+      @for (line of lines; track $index; let last = $last) {
+        {{ line }}@if (!last) {<br />}
+      }
+    </p>
+  }
+  <p class="text-ink-700">
+    @for (line of mail.signature; track $index; let first = $first; let last = $last) {
+      @if (first) {
+        <span class="font-semibold text-ink-900">{{ line }}</span>
+      } @else {
+        {{ line }}
+      }
+      @if (!last) {<br />}
+    }
+  </p>
+</div>

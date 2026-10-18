@@ -1,0 +1,115 @@
+@let c = caseRecord();
+@let r = c.rating;
+
+<ng-template #group let-label="label" let-key="key">
+  <button type="button" [attr.aria-expanded]="isOpen(key)" (click)="toggleGroup(key)" class="focus-ring inline-flex items-center gap-1 rounded text-[13px] font-medium text-brand-700 hover:text-brand-900">
+    <lucide-icon [img]="icons.ChevronDownIcon" [class]="'h-4 w-4 transition-transform duration-150' + (isOpen(key) ? '' : ' -rotate-90')" aria-hidden="true" />
+    {{ label }}
+  </button>
+</ng-template>
+
+<app-column-panel heading="Summary" tone="warning" [icon]="icons.MenuIcon">
+  <div columnActions class="flex items-center gap-0.5">
+    <label class="mr-2 inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-ink-700">
+      <input type="checkbox" [checked]="all()" [indeterminate]="some() && !all()" (change)="toggleAll()" class="focus-ring h-4 w-4 cursor-pointer accent-brand-600" />
+      Select All
+    </label>
+    <button type="button" aria-label="Print selected sections" appTooltip="Print" [class]="headerBtn" (click)="output('Print')">
+      <lucide-icon [img]="icons.PrinterIcon" class="h-4 w-4" aria-hidden="true" />
+    </button>
+    <button type="button" aria-label="Export selected sections to PDF" appTooltip="Export to PDF" [class]="headerBtn" (click)="output('PDF')">
+      <lucide-icon [img]="icons.FileTextIcon" class="h-4 w-4" aria-hidden="true" />
+    </button>
+    <button type="button" aria-label="Email selected sections" appTooltip="Email" [class]="headerBtn" (click)="output('Email')">
+      <lucide-icon [img]="icons.MailIcon" class="h-4 w-4" aria-hidden="true" />
+    </button>
+  </div>
+
+  <h3 class="text-base font-semibold text-brand-700">{{ c.caseNumber }}-{{ c.claimantName }} (SS)</h3>
+  <p class="text-xs text-ink-500">created by {{ c.createdBy }} on {{ c.createdOn }}</p>
+
+  <div class="mt-4 space-y-4 divide-y divide-ink-100">
+    <div>
+      <label appChoice>
+        <input type="checkbox" [class]="choiceInput" [checked]="included().claimant" (change)="toggle('claimant')" />
+        <span class="font-semibold">Claimant Information</span>
+      </label>
+      <dl class="mt-2 grid grid-cols-[120px_1fr] gap-x-3 gap-y-1 pl-6 text-[13px]">
+        <dt class="text-ink-500">Claimant Name:</dt>
+        <dd class="font-medium">{{ c.claimantName }}</dd>
+        <dt class="text-ink-500">Date of birth:</dt>
+        <dd class="font-medium tabular-nums">{{ c.dob }}</dd>
+        <dt class="text-ink-500">Gender:</dt>
+        <dd class="font-medium">{{ c.gender }}</dd>
+        <dt class="text-ink-500">Age Now:</dt>
+        <dd class="font-medium">{{ c.ageNow }}</dd>
+      </dl>
+      <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 pl-6 text-xs text-ink-700" aria-label="Case flags">
+        <li>Rush: {{ yn(c.flags.rush) }}</li>
+        <li>Rework: {{ yn(c.flags.rework) }}</li>
+        <li>Mediation: {{ yn(c.flags.mediation) }}</li>
+        <li>MSA: {{ yn(c.flags.msa) }}</li>
+        <li>WC: <span [class.font-semibold]="c.flags.wc" [class.text-success-700]="c.flags.wc">{{ yn(c.flags.wc) }}</span></li>
+      </ul>
+    </div>
+
+    <div class="pt-4">
+      <label appChoice>
+        <input type="checkbox" [class]="choiceInput" [checked]="included().team" (change)="toggle('team')" />
+        <span class="font-semibold">Team</span>
+      </label>
+      <div class="pl-6">
+        <div class="mt-2">
+          <ng-container *ngTemplateOutlet="group; context: { label: 'Broker Firm', key: 'broker' }" />
+          @if (open().broker) {
+            <div class="mt-2 pl-5"><p class="text-[13px] font-semibold">{{ c.broker.firm }}</p></div>
+          }
+        </div>
+        <div class="mt-2">
+          <ng-container *ngTemplateOutlet="group; context: { label: 'Medical Underwriters', key: 'underwriters' }" />
+          @if (open().underwriters) {
+            <div class="mt-2 pl-5">
+              <p class="text-[13px] font-semibold">{{ c.underwriter.name }}</p>
+              <dl class="mt-1 grid grid-cols-[64px_1fr] gap-x-2 gap-y-0.5 text-xs text-ink-700">
+                <dt class="text-ink-500">Email:</dt>
+                <dd class="break-all">{{ c.underwriter.email }}</dd>
+                <dt class="text-ink-500">Phone:</dt>
+                <dd>{{ c.underwriter.phone }}</dd>
+                <dt class="text-ink-500">Address:</dt>
+                <dd>{{ c.underwriter.address }}</dd>
+              </dl>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-4">
+      <label appChoice>
+        <input type="checkbox" [class]="choiceInput" [checked]="included().rating" (change)="toggle('rating')" />
+        <span class="font-semibold">Rating</span>
+      </label>
+      <div class="pl-6">
+        <div class="mt-2">
+          <ng-container *ngTemplateOutlet="group; context: { label: c.underwriter.name, key: 'rating' }" />
+          @if (open().rating) {
+            <div class="mt-2 pl-5">
+              @if (r) {
+                <dl class="grid grid-cols-[120px_1fr] gap-x-3 gap-y-0.5 text-[13px]">
+                  <dt class="text-ink-500">Final Rated Age:</dt>
+                  <dd class="font-semibold text-danger-600">{{ r.finalRatedAge }}</dd>
+                  <dt class="text-ink-500">Normal L.E.:</dt>
+                  <dd class="tabular-nums">{{ r.normalLE.toFixed(2) }}</dd>
+                  <dt class="text-ink-500">Date Evaluated:</dt>
+                  <dd class="tabular-nums">{{ r.dateEvaluated }}</dd>
+                </dl>
+              } @else {
+                <p class="text-[13px] text-ink-500">No Records</p>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</app-column-panel>

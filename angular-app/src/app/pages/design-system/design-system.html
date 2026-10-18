@@ -1,0 +1,517 @@
+<ng-template #sectionHead let-id="id" let-title="title" let-description="description">
+  <h2 [id]="id + '-title'" tabindex="-1" class="text-lg font-semibold text-ink-900 focus:outline-none">{{ title }}</h2>
+  @if (description) {
+    <p class="mt-1 max-w-3xl text-sm text-ink-500">{{ description }}</p>
+  }
+</ng-template>
+
+<div class="mx-auto grid w-full max-w-[1600px] gap-8 p-4 lg:grid-cols-[200px_minmax(0,1fr)] lg:p-6">
+  <nav aria-label="Design system sections" class="hidden lg:block">
+    <div class="sticky top-[112px] space-y-5">
+      @for (g of toc; track g.group) {
+        <div>
+          <p class="px-2 text-xs font-semibold text-ink-500">{{ g.group }}</p>
+          <ul class="mt-1.5 space-y-0.5">
+            @for (item of g.items; track item[0]) {
+              <li>
+                <a
+                  [href]="'/design-system#' + item[0]"
+                  (click)="jump($event, item[0])"
+                  [attr.aria-current]="active() === item[0] ? 'location' : null"
+                  [class]="active() === item[0] ? 'focus-ring block rounded-md bg-white px-2 py-1 text-[13px] font-semibold text-brand-700 shadow-xs ring-1 ring-ink-200' : 'focus-ring block rounded-md px-2 py-1 text-[13px] text-ink-700 transition-colors duration-150 hover:bg-white hover:text-ink-900'">
+                  {{ item[1] }}
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  </nav>
+
+  <div #content class="min-w-0">
+    <header class="mb-8 rounded-lg border border-ink-200 bg-white p-6 shadow-xs">
+      <h1 class="text-2xl font-semibold text-ink-900">FlowRocket Design System</h1>
+      <p class="mt-2 max-w-3xl text-sm leading-6 text-ink-700">
+        The tokens and components behind the redesigned FlowRocket medical underwriting screens. Everything here is the same code the prototype uses, so the Work Queue, Email &amp; Document
+        Review, Claimant, Rating Activity and Activity Sheets screens stay consistent with this reference.
+      </p>
+    </header>
+
+    <div class="space-y-10 [&>section:first-child]:border-t-0 [&>section:first-child]:pt-0 [&>section]:scroll-mt-28 [&>section]:border-t [&>section]:border-ink-200 [&>section]:pt-8">
+      <!-- Foundations -->
+      <section id="color" aria-labelledby="color-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'color', title: 'Color', description: 'Brand and semantic tokens are defined in tailwind.config.js. Screens never use raw palette values.' }" />
+        <div class="mt-5 space-y-8">
+          @for (g of colorGroups; track g.name) {
+            <div>
+              <h3 class="text-sm font-semibold text-ink-900">{{ g.name }}</h3>
+              <p class="mt-0.5 text-[13px] text-ink-500">{{ g.description }}</p>
+              <ul class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-7">
+                @for (s of g.swatches; track s.token) {
+                  <li class="overflow-hidden rounded-md border border-ink-200 bg-white">
+                    <div class="flex h-16 items-end p-2 text-xs font-semibold" [style.background-color]="s.hex" [style.color]="s.onDark ? '#FFFFFF' : '#1B2733'">Aa</div>
+                    <div class="p-2">
+                      <p class="text-xs font-semibold text-ink-900">{{ s.token }}</p>
+                      <p class="font-mono text-[11px] text-ink-500">{{ s.hex }}</p>
+                      <p class="mt-1 text-[11px] leading-4 text-ink-700">{{ s.usage }}</p>
+                    </div>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section id="typography" aria-labelledby="typography-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'typography', title: 'Typography', description: 'One typeface, Inter, for the entire application. Sizes are tuned for dense underwriting data.' }" />
+
+        <div class="mt-5 grid overflow-hidden rounded-xl border border-ink-200 bg-white shadow-raised lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+          <div class="flex flex-col justify-between gap-6 bg-brand-800 p-6 text-white">
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-brand-200">Application typeface</p>
+              <p class="mt-2 text-4xl font-semibold tracking-tight">Inter</p>
+              <p class="mt-1 text-sm text-brand-100">Designed by Rasmus Andersson for screen interfaces · SIL Open Font License</p>
+            </div>
+            <p class="text-[88px] font-semibold leading-none tracking-tight" aria-hidden="true">Aa</p>
+            <p class="text-sm text-brand-100" aria-hidden="true">ABCDEFGHIJKLM abcdefghijklm 0123456789</p>
+          </div>
+          <dl class="divide-y divide-ink-100 text-[13px]">
+            <div class="grid gap-1 px-5 py-3.5 sm:grid-cols-[150px_minmax(0,1fr)]">
+              <dt class="font-medium text-ink-500">Source</dt>
+              <dd class="text-ink-900">Google Fonts, loaded in <code class="rounded bg-ink-100 px-1 py-0.5 font-mono text-xs">src/styles.css</code></dd>
+            </div>
+            <div class="grid gap-1 px-5 py-3.5 sm:grid-cols-[150px_minmax(0,1fr)]">
+              <dt class="font-medium text-ink-500">Weights in use</dt>
+              <dd class="flex flex-wrap gap-x-5 gap-y-1 text-[15px] text-ink-900">
+                <span class="font-normal">Regular 400</span>
+                <span class="font-medium">Medium 500</span>
+                <span class="font-semibold">Semibold 600</span>
+                <span class="font-bold">Bold 700</span>
+              </dd>
+            </div>
+            <div class="grid gap-1 px-5 py-3.5 sm:grid-cols-[150px_minmax(0,1fr)]">
+              <dt class="font-medium text-ink-500">CSS font stack</dt>
+              <dd><code class="rounded bg-ink-100 px-1.5 py-0.5 font-mono text-xs text-ink-900">Inter, ui-sans-serif, system-ui, sans-serif</code><span class="mt-1 block text-xs text-ink-500">Tailwind <code class="font-mono">font-sans</code>, set in tailwind.config.js</span></dd>
+            </div>
+            <div class="grid gap-1 px-5 py-3.5 sm:grid-cols-[150px_minmax(0,1fr)]">
+              <dt class="font-medium text-ink-500">Numbers</dt>
+              <dd class="text-ink-900">
+                Tabular figures (<code class="rounded bg-ink-100 px-1 py-0.5 font-mono text-xs">tabular-nums</code>) for dates, ages, case numbers and life expectancy, so columns line up:
+                <span class="mt-1.5 flex gap-4 font-medium tabular-nums">
+                  <span>04/01/2026</span><span>20.72</span><span>15.54</span><span>26-01867</span>
+                </span>
+              </dd>
+            </div>
+            <div class="grid gap-1 px-5 py-3.5 sm:grid-cols-[150px_minmax(0,1fr)]">
+              <dt class="font-medium text-ink-500">Other fonts</dt>
+              <dd class="space-y-1 text-ink-900">
+                <p><span class="font-semibold">Helvetica</span> — downloaded RA Confirmation PDF (built into every PDF reader).</p>
+                <p><span class="font-semibold" style="font-family: ui-serif, Georgia, serif">System serif</span> — scanned medical records and Form 461 previews, so source documents look different from the app.</p>
+              </dd>
+            </div>
+          </dl>
+        </div>
+
+        <h3 class="mt-8 text-sm font-semibold text-ink-900">Type scale</h3>
+        <div class="mt-3 divide-y divide-ink-100 overflow-hidden rounded-lg border border-ink-200 bg-white">
+          @for (t of typeScale; track t.name) {
+            <div class="grid gap-2 px-4 py-3 md:grid-cols-[160px_180px_minmax(0,1fr)] md:items-center">
+              <div>
+                <p class="text-[13px] font-semibold text-ink-900">{{ t.name }}</p>
+                <p class="text-xs text-ink-500">{{ t.usage }}</p>
+              </div>
+              <p class="font-mono text-xs text-ink-700">{{ t.spec }}</p>
+              <p [class]="'truncate text-ink-900 ' + t.className">{{ t.sample }}</p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section id="spacing" aria-labelledby="spacing-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'spacing', title: 'Spacing, radius & elevation', description: 'A 4px base grid. Radii stay small to keep the enterprise density, and shadows are limited to one hairline level plus one overlay level.' }" />
+        <div class="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <ul class="space-y-2 rounded-lg border border-ink-200 bg-white p-4">
+            @for (s of spacingScale; track s.token) {
+              <li class="grid grid-cols-[48px_48px_1fr] items-center gap-3 text-[13px]">
+                <span class="font-mono text-xs text-ink-700">{{ s.token }}</span>
+                <span class="text-xs tabular-nums text-ink-500">{{ s.px }}px</span>
+                <span class="flex items-center gap-3">
+                  <span class="h-3 rounded-sm bg-brand-500" [style.width.px]="s.px * 2" aria-hidden="true"></span>
+                  <span class="text-ink-700">{{ s.usage }}</span>
+                </span>
+              </li>
+            }
+          </ul>
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            @for (r of radii; track r[0]) {
+              <div class="text-center">
+                <div [class]="'mx-auto h-16 w-full border border-ink-300 bg-white ' + r[0]" aria-hidden="true"></div>
+                <p class="mt-2 font-mono text-xs text-ink-900">{{ r[0] }}</p>
+                <p class="text-[11px] text-ink-500">{{ r[1] }} · {{ r[2] }}</p>
+              </div>
+            }
+            <div class="col-span-2 rounded-lg border border-ink-200 bg-white p-3 shadow-xs">
+              <p class="text-xs font-semibold text-ink-900">shadow-xs</p>
+              <p class="text-[11px] text-ink-500">Panels, buttons, inputs</p>
+            </div>
+            <div class="col-span-2 rounded-lg border border-ink-200 bg-white p-3 shadow-overlay">
+              <p class="text-xs font-semibold text-ink-900">shadow-overlay</p>
+              <p class="text-[11px] text-ink-500">Dialogs, document pages</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="layout" aria-labelledby="layout-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'layout', title: 'Layout & grid', description: 'Each screen keeps its original arrangement. These are the four layouts the application uses.' }" />
+        <div class="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <figure>
+            <div class="h-36 rounded-md border border-ink-200 bg-canvas p-2" aria-hidden="true">
+              <div class="flex h-full flex-col gap-1.5">
+                <div class="h-1/4 rounded-sm bg-white ring-1 ring-ink-200"></div>
+                <div class="h-1/4 rounded-sm bg-white ring-1 ring-ink-200"></div>
+                <div class="h-1/4 w-1/2 rounded-sm bg-white ring-1 ring-ink-200"></div>
+                <div class="h-1/4 rounded-sm bg-white ring-1 ring-ink-200"></div>
+              </div>
+            </div>
+            <figcaption class="mt-2"><p class="text-[13px] font-semibold text-ink-900">Workspace (stacked panels)</p><p class="text-xs text-ink-500">Max 1600px · 24px gutter · 20px gap</p></figcaption>
+          </figure>
+          <figure>
+            <div class="h-36 rounded-md border border-ink-200 bg-canvas p-2" aria-hidden="true">
+              <div class="grid h-full grid-cols-[38%_1fr] gap-1.5">
+                <div class="rounded-sm bg-white ring-1 ring-ink-200"></div>
+                <div class="rounded-sm bg-white ring-1 ring-ink-200"></div>
+              </div>
+            </div>
+            <figcaption class="mt-2"><p class="text-[13px] font-semibold text-ink-900">Review split pane</p><p class="text-xs text-ink-500">Search 340–400px · email fills rest</p></figcaption>
+          </figure>
+          <figure>
+            <div class="h-36 rounded-md border border-ink-200 bg-canvas p-2" aria-hidden="true">
+              <div class="flex h-full flex-col gap-1.5">
+                <div class="h-4 rounded-sm bg-white ring-1 ring-ink-200"></div>
+                <div class="grid flex-1 grid-cols-[1fr_36%] gap-1.5">
+                  <div class="rounded-sm bg-white ring-1 ring-ink-200"></div>
+                  <div class="rounded-sm bg-white ring-1 ring-ink-200"></div>
+                </div>
+              </div>
+            </div>
+            <figcaption class="mt-2"><p class="text-[13px] font-semibold text-ink-900">Case detail</p><p class="text-xs text-ink-500">Main 1fr · side 400px at ≥1280px</p></figcaption>
+          </figure>
+          <figure>
+            <div class="h-36 rounded-md border border-ink-200 bg-canvas p-2" aria-hidden="true">
+              <div class="flex h-full flex-col gap-1.5">
+                <div class="h-4 rounded-sm bg-white ring-1 ring-ink-200"></div>
+                <div class="grid flex-1 grid-cols-3 gap-1.5">
+                  <div class="rounded-sm bg-white ring-1 ring-ink-200"><div class="h-2 rounded-t-sm bg-success-700"></div></div>
+                  <div class="rounded-sm bg-white ring-1 ring-ink-200"><div class="h-2 rounded-t-sm bg-warning-500"></div></div>
+                  <div class="rounded-sm bg-white ring-1 ring-ink-200"><div class="h-2 rounded-t-sm bg-brand-600"></div></div>
+                </div>
+              </div>
+            </div>
+            <figcaption class="mt-2"><p class="text-[13px] font-semibold text-ink-900">Activity Sheets</p><p class="text-xs text-ink-500">3 columns ≥1280px · 2 at ≥1024px · stacked below</p></figcaption>
+          </figure>
+        </div>
+        <p class="mt-4 text-[13px] text-ink-500">
+          Breakpoints: sm 640 · md 768 · lg 1024 · xl 1280 · 2xl 1536. Desktop layouts are the baseline. Below lg, panes stack in their original reading order and tables scroll horizontally instead of dropping columns.
+        </p>
+      </section>
+
+      <!-- Controls -->
+      <section id="buttons" aria-labelledby="buttons-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'buttons', title: 'Buttons', description: 'Two sizes: md (36px) for page actions and sm (32px) for toolbars and table actions. Labels never wrap.' }" />
+        <div class="mt-5 overflow-x-auto rounded-lg border border-ink-200 bg-white">
+          <table class="w-full min-w-[820px] text-[13px]">
+            <thead class="bg-ink-50 text-left text-xs font-semibold text-ink-700">
+              <tr>
+                <th scope="col" class="px-4 py-2.5">Variant</th>
+                @for (s of states; track s) {
+                  <th scope="col" class="px-3 py-2.5">{{ s }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (v of variants; track v.variant) {
+                <tr class="border-t border-ink-100">
+                  <th scope="row" class="px-4 py-3 text-left align-middle">
+                    <p class="font-semibold text-ink-900">{{ v.name }}</p>
+                    <p class="text-xs font-normal text-ink-500">{{ v.usage }}</p>
+                  </th>
+                  <td class="px-3 py-3"><button appButton [variant]="v.variant" size="sm">Save</button></td>
+                  <td class="px-3 py-3"><button [appButton]="v.hover" [variant]="v.variant" size="sm" tabindex="-1">Save</button></td>
+                  <td class="px-3 py-3"><button [appButton]="focus" [variant]="v.variant" size="sm" tabindex="-1">Save</button></td>
+                  <td class="px-3 py-3"><button [appButton]="v.active" [variant]="v.variant" size="sm" tabindex="-1">Save</button></td>
+                  <td class="px-3 py-3"><button appButton [variant]="v.variant" size="sm" [disabled]="true">Save</button></td>
+                  <td class="px-3 py-3"><button appButton [variant]="v.variant" size="sm" [loading]="true">Save</button></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center gap-6 rounded-lg border border-ink-200 bg-white p-4">
+          <div>
+            <p class="mb-2 text-xs font-medium text-ink-500">With icon · md</p>
+            <div class="flex gap-2">
+              <button appButton variant="primary" [leadingIcon]="i.SearchIcon">Search</button>
+              <button appButton [leadingIcon]="i.SaveIcon">Save Note</button>
+            </div>
+          </div>
+          <div>
+            <p class="mb-2 text-xs font-medium text-ink-500">Icon buttons (aria-label required)</p>
+            <div class="flex gap-1">
+              <button appIconButton label="Save" [icon]="i.SaveIcon"></button>
+              <button appIconButton label="Save" variant="outline" [icon]="i.SaveIcon"></button>
+              <button appIconButton label="Trash" variant="danger" [icon]="i.Trash2Icon"></button>
+              <span class="rounded-md bg-brand-600 p-1">
+                <button appIconButton label="Search" variant="onBrand" [icon]="i.SearchIcon"></button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="inputs" aria-labelledby="inputs-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'inputs', title: 'Inputs', description: 'Labels always stay visible above or beside the field, never as placeholder only. Errors explain how to fix the problem.' }" />
+        <div class="mt-5 grid gap-5 rounded-lg border border-ink-200 bg-white p-5 sm:grid-cols-2 xl:grid-cols-4">
+          <app-field label="Default" for="ds-in-default" hint="Claimant last name"><input appControl id="ds-in-default" placeholder="Last name" /></app-field>
+          <app-field label="Hover" for="ds-in-hover"><input appControl="border-ink-300" id="ds-in-hover" placeholder="Last name" tabindex="-1" /></app-field>
+          <app-field label="Focus" for="ds-in-focus"><input appControl="border-brand-500 ring-2 ring-brand-500/25" id="ds-in-focus" value="ELDRIDGE" tabindex="-1" /></app-field>
+          <app-field label="Filled" for="ds-in-filled"><input appControl id="ds-in-filled" value="05/25/1973" /></app-field>
+          <app-field label="Disabled" for="ds-in-disabled"><input appControl id="ds-in-disabled" value="26-01867" disabled /></app-field>
+          <app-field label="Read-only" for="ds-in-readonly"><input appControl id="ds-in-readonly" value="Female" readonly /></app-field>
+          <app-field label="Error" for="ds-in-error" error="Use the format MM/DD/YYYY."><input appControl id="ds-in-error" value="5-25-73" [invalid]="true" aria-describedby="ds-in-error-error" /></app-field>
+          <app-field label="Success" for="ds-in-success" success="Claimant found in the system."><input appControl="border-success-600" id="ds-in-success" value="STUART" aria-describedby="ds-in-success-success" /></app-field>
+          <app-field label="With icon (search)" for="ds-in-search" fieldClass="sm:col-span-2">
+            <app-input-icon [icon]="i.SearchIcon"><input appControl="pl-8" controlSize="sm" id="ds-in-search" type="search" placeholder="Search" /></app-input-icon>
+          </app-field>
+          <app-field label="Inline layout" for="ds-in-inline" layout="inline" fieldClass="sm:col-span-2"><input appControl="w-36" id="ds-in-inline" value="04/01/2026" /></app-field>
+        </div>
+      </section>
+
+      <section id="dropdowns" aria-labelledby="dropdowns-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'dropdowns', title: 'Dropdowns, checkboxes & radios', description: 'Native controls keep keyboard and screen reader behavior, styled to match the input tokens.' }" />
+        <div class="mt-5 grid gap-5 rounded-lg border border-ink-200 bg-white p-5 lg:grid-cols-3">
+          <div class="space-y-4">
+            <app-field label="Status" for="ds-sel-default">
+              <app-select>
+                <select appControl id="ds-sel-default">
+                  <option selected>Ready for UW</option>
+                  <option>Rated*</option>
+                  <option>CS Communicated</option>
+                </select>
+              </app-select>
+            </app-field>
+            <app-field label="Underwriter (disabled)" for="ds-sel-disabled">
+              <app-select><select appControl id="ds-sel-disabled" disabled><option>Stacey Angoy (2)</option></select></app-select>
+            </app-field>
+            <app-field label="Gender (error)" for="ds-sel-error" error="Select a gender.">
+              <app-select><select appControl id="ds-sel-error" [invalid]="true" aria-describedby="ds-sel-error-error"><option>Select</option></select></app-select>
+            </app-field>
+          </div>
+          <fieldset class="flex flex-col items-start space-y-2.5">
+            <legend class="mb-2 text-[13px] font-medium text-ink-700">Checkbox</legend>
+            <label appChoice><input type="checkbox" [class]="choiceInput" checked />Rush (checked)</label>
+            <label appChoice><input type="checkbox" [class]="choiceInput" />Rework (unchecked)</label>
+            <label appChoice [disabled]="true"><input type="checkbox" [class]="choiceInput" disabled />MSA (disabled)</label>
+            <label appChoice [disabled]="true"><input type="checkbox" [class]="choiceInput" disabled checked />WC (checked, disabled)</label>
+          </fieldset>
+          <fieldset class="flex flex-col items-start space-y-2.5">
+            <legend class="mb-2 text-[13px] font-medium text-ink-700">Attach Medical (radio)</legend>
+            <label appChoice><input type="radio" name="ds-radio" [class]="choiceInput" />Email</label>
+            <label appChoice><input type="radio" name="ds-radio" [class]="choiceInput" />Attachment(s)</label>
+            <label appChoice><input type="radio" name="ds-radio" [class]="choiceInput" checked />Both</label>
+            <label appChoice [disabled]="true"><input type="radio" name="ds-radio" [class]="choiceInput" disabled />Do Not Attach (disabled)</label>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- Display -->
+      <section id="tables" aria-labelledby="tables-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'tables', title: 'Data tables', description: 'One component covers all 10+ grids in the app. It keeps the original Show entries control, export tools, search, sortable columns, the “Showing X to Y of Z entries” footer and pagination.' }" />
+        <app-panel class="mt-5" heading="My Underwriter Work Queue (sample)" bodyClass="p-0">
+          <app-data-table id="ds-table" label="Sample work queue" [columns]="columns" [rows]="workQueue" [defaultPageSize]="5" [rowId]="rowId" [searchText]="searchText">
+            <ng-template appCell="rush" let-r><app-flag-indicator kind="rush" [active]="r.rush" /></ng-template>
+            <ng-template appCell="rework" let-r><app-flag-indicator kind="rework" [active]="r.rework" /></ng-template>
+            <ng-template appCell="claimant" let-r><span class="font-medium text-brand-700">{{ r.claimant }}</span></ng-template>
+            <ng-template appCell="status" let-r><app-status-badge [status]="r.status" /></ng-template>
+          </app-data-table>
+        </app-panel>
+        <ul class="mt-3 grid gap-x-6 gap-y-1 text-[13px] text-ink-700 sm:grid-cols-2">
+          <li>• 12px semibold headers on ink-50, with a sort affordance on every sortable column</li>
+          <li>• 13px cells, 10px vertical padding, hairline row dividers</li>
+          <li>• Row hover uses brand-50 because rows hold primary links</li>
+          <li>• Empty state reads “No Records Found”, as in the original</li>
+        </ul>
+      </section>
+
+      <section id="badges" aria-labelledby="badges-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'badges', title: 'Badges & status indicators' }" />
+        <div class="mt-5 grid gap-5 rounded-lg border border-ink-200 bg-white p-5 md:grid-cols-3">
+          <div>
+            <p class="mb-2 text-xs font-medium text-ink-500">Case status</p>
+            <div class="flex flex-wrap gap-2">
+              <app-status-badge status="Ready for UW" />
+              <app-status-badge status="Rated*" />
+              <app-status-badge status="CS Communicated" />
+            </div>
+          </div>
+          <div>
+            <p class="mb-2 text-xs font-medium text-ink-500">Tones</p>
+            <div class="flex flex-wrap gap-2">
+              <app-badge>Neutral</app-badge>
+              <app-badge tone="info" [icon]="i.ReplyIcon">Replied</app-badge>
+              <app-badge tone="success">Success</app-badge>
+              <app-badge tone="warning">Warning</app-badge>
+              <app-badge tone="danger">Error</app-badge>
+            </div>
+          </div>
+          <div>
+            <p class="mb-2 text-xs font-medium text-ink-500">Flags (column-labeled, SR text)</p>
+            <div class="flex items-center gap-4 text-[13px]">
+              <span class="inline-flex items-center gap-1.5"><app-flag-indicator kind="rush" [active]="true" /> Rush</span>
+              <span class="inline-flex items-center gap-1.5"><app-flag-indicator kind="rework" [active]="true" /> Rework</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="alerts" aria-labelledby="alerts-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'alerts', title: 'Alerts & feedback', description: 'Inline alerts handle validation and form-level messages. Toasts confirm completed actions and offer Undo for reversible ones.' }" />
+        <div class="mt-5 grid gap-3 md:grid-cols-2">
+          <app-alert tone="info">No existing claimant matches. Create a new claimant to continue.</app-alert>
+          <app-alert tone="success" heading="Rating activity saved">SHEILA STUART · Final Rated Age 65</app-alert>
+          <app-alert tone="warning">Calculate the rated age before saving.</app-alert>
+          <app-alert tone="danger" heading="Please fix 2 fields before saving.">Required fields are marked with an asterisk.</app-alert>
+        </div>
+      </section>
+
+      <section id="cards" aria-labelledby="cards-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'cards', title: 'Cards, panels & tabs' }" />
+        <div class="mt-5 grid gap-5 lg:grid-cols-2">
+          <app-panel heading="Rating Activity">
+            <app-badge panelActions tone="warning" [dot]="true">Rated*</app-badge>
+            <div class="flex items-center gap-4">
+              <app-avatar initials="SA" tone="warning" size="lg" />
+              <dl class="grid flex-1 grid-cols-3 gap-4">
+                <div><dt class="text-xs font-medium text-ink-500">Normal L.E.</dt><dd class="text-2xl font-semibold tabular-nums text-brand-700">20.72</dd></div>
+                <div><dt class="text-xs font-medium text-ink-500">Estimated L.E.</dt><dd class="text-2xl font-semibold tabular-nums text-warning-700">20.72</dd></div>
+                <div><dt class="text-xs font-medium text-ink-500">Final Rated Age</dt><dd class="text-2xl font-semibold tabular-nums text-danger-600">65</dd></div>
+              </dl>
+            </div>
+          </app-panel>
+          <div class="rounded-lg border border-ink-200 bg-white shadow-xs">
+            <app-tabs class="px-3 pt-2" idPrefix="ds-tabs" label="Tabs example" [items]="tabs" [(value)]="tab" />
+            <div [id]="'ds-tabs-panel-' + tab()" role="tabpanel" [attr.aria-labelledby]="'ds-tabs-tab-' + tab()" class="p-4 text-[13px] text-ink-700">
+              {{ tab() === 'ra' ? 'Underline tabs: brand-600 indicator, keyboard arrows, Home and End.' : 'Each tab panel is linked to its tab with aria-controls and aria-labelledby.' }}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="modals" aria-labelledby="modals-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'modals', title: 'Modals', description: 'Used only for destructive confirmation and short single-field tasks. The dialog enters from scale 0.96 over 200ms, traps focus and closes on Esc.' }" />
+        <div class="mt-5 flex flex-wrap gap-2">
+          <button appButton variant="danger" [leadingIcon]="i.Trash2Icon" (click)="modal.set(true)">Open confirmation dialog</button>
+        </div>
+        <app-modal [open]="modal()" heading="Move this email to trash?" description="“Jon Eldridge” from KELSEY TAYLOR will be removed from the SS Medicals Inbox." (closed)="modal.set(false)">
+          <div modalFooter class="contents">
+            <button appButton (click)="modal.set(false)">Cancel</button>
+            <button appButton variant="destructive" (click)="modal.set(false)">Move to Trash</button>
+          </div>
+        </app-modal>
+      </section>
+
+      <section id="navigation" aria-labelledby="navigation-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'navigation', title: 'Navigation', description: 'The original two-tier blue header and per-record window bar are kept. Tone and spacing are refined, and every icon has a label.' }" />
+        <div class="mt-5 space-y-5">
+          <div>
+            <p class="mb-2 text-xs font-medium text-ink-500">Application header — brand-600 primary bar + brand-700 workspace bar</p>
+            <div class="overflow-hidden rounded-lg border border-ink-200" aria-hidden="true">
+              <div class="flex h-12 items-center gap-3 bg-brand-600 px-3 text-sm font-medium text-white">
+                <span class="grid h-7 w-7 place-items-center rounded-md bg-white/15"><lucide-icon [img]="i.HourglassIcon" class="h-4 w-4" /></span>
+                <span class="inline-flex items-center gap-1 rounded-md bg-white/10 px-2.5 py-1">Address Book <lucide-icon [img]="i.ChevronDownIcon" class="h-4 w-4" /></span>
+                <span>Documents</span>
+                <span>Calendar</span>
+                <span>Tools</span>
+                <span class="mx-auto hidden h-8 w-72 rounded-md bg-white md:block"></span>
+                <lucide-icon [img]="i.ChartLineIcon" class="h-4 w-4" />
+                <span class="inline-flex items-center gap-1.5"><lucide-icon [img]="i.UserIcon" class="h-4 w-4" /> Lauren McKenna</span>
+                <lucide-icon [img]="i.LogOutIcon" class="h-4 w-4" />
+              </div>
+              <div class="flex h-10 items-center justify-between bg-brand-700 px-3 text-sm font-medium text-white">
+                <span class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1.5 rounded-md bg-white/15 px-2.5 py-1"><lucide-icon [img]="i.HouseIcon" class="h-4 w-4" /> Home Workspace</span>
+                  <span class="text-white/90">Reports</span>
+                </span>
+                <lucide-icon [img]="i.BellIcon" class="h-4 w-4" />
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="mb-2 text-xs font-medium text-ink-500">Window bar + case header (record views)</p>
+            <div class="overflow-hidden rounded-lg border border-ink-200 bg-white">
+              <div class="flex h-11 items-center justify-between border-b border-ink-200 px-4" aria-hidden="true">
+                <p class="text-[15px] font-semibold text-brand-800">SHEILA STUART (26-01867)</p>
+                <span class="flex gap-2 text-ink-500">
+                  <lucide-icon [img]="i.RefreshCwIcon" class="h-4 w-4" />
+                  <lucide-icon [img]="i.MinusIcon" class="h-4 w-4" />
+                  <lucide-icon [img]="i.XIcon" class="h-4 w-4 text-danger-600" />
+                </span>
+              </div>
+              <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5">
+                <p class="text-lg font-semibold text-ink-900">Rating Activity for SHEILA STUART</p>
+                <div class="flex items-center gap-3">
+                  <app-status-badge status="Rated*" />
+                  <app-case-toolbar caseId="26-01867" />
+                </div>
+              </div>
+            </div>
+            <p class="mt-2 text-[13px] text-ink-500">The case toolbar is live. Use it to jump between the case’s Activity Sheets, Rating Activity, RA sheet and messaging screens.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Guidance -->
+      <section id="accessibility" aria-labelledby="accessibility-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'accessibility', title: 'Accessibility — WCAG 2.2 AA', description: 'Every component on this page and every screen in the prototype meets these criteria.' }" />
+        <div class="mt-5 overflow-x-auto rounded-lg border border-ink-200 bg-white">
+          <table class="w-full min-w-[640px] text-[13px]">
+            <thead class="bg-ink-50 text-left text-xs font-semibold text-ink-700">
+              <tr>
+                <th scope="col" class="w-64 px-4 py-2.5">Success criterion</th>
+                <th scope="col" class="px-4 py-2.5">How FlowRocket meets it</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (g of a11yGuidelines; track g.criterion) {
+                <tr class="border-t border-ink-100 align-top">
+                  <th scope="row" class="px-4 py-3 text-left font-semibold text-ink-900">{{ g.criterion }}</th>
+                  <td class="px-4 py-3 leading-5 text-ink-700">{{ g.guidance }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="review" aria-labelledby="review-title">
+        <ng-container *ngTemplateOutlet="sectionHead; context: { id: 'review', title: 'Flagged for review', description: 'Where the redesign had to go beyond visual refinement, the original structure was kept and the change is listed here for client sign-off.' }" />
+        <ol class="mt-5 divide-y divide-ink-100 rounded-lg border border-warning-100 bg-white">
+          @for (f of flaggedChanges; track f.title; let n = $index) {
+            <li class="flex gap-3 px-4 py-3">
+              <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-warning-50 text-xs font-semibold text-warning-700">{{ n + 1 }}</span>
+              <div>
+                <p class="flex items-center gap-1.5 text-[13px] font-semibold text-ink-900">
+                  <lucide-icon [img]="i.TriangleAlertIcon" class="h-3.5 w-3.5 text-warning-600" aria-hidden="true" />
+                  {{ f.title }}
+                </p>
+                <p class="mt-0.5 text-[13px] leading-5 text-ink-700">{{ f.detail }}</p>
+              </div>
+            </li>
+          }
+        </ol>
+      </section>
+    </div>
+  </div>
+</div>

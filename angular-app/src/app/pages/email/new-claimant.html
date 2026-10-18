@@ -1,0 +1,188 @@
+@if (item(); as item) {
+  <div class="flex min-h-[calc(100vh-88px)] flex-col">
+    <app-window-bar [heading]="item.subject" [icon]="i.MailIcon" />
+    <div class="grid flex-1 bg-white xl:grid-cols-[minmax(0,1fr)_minmax(380px,460px)]">
+      <form novalidate (ngSubmit)="submit('close')" class="min-w-0 border-b border-ink-200 xl:border-b-0 xl:border-r">
+        <div class="flex items-center justify-between border-b border-ink-200 bg-ink-50 px-4 py-2 lg:px-6">
+          <h1 class="text-sm font-semibold text-ink-900">Claimant Information</h1>
+          <button appIconButton label="Claimant options" size="sm" [icon]="i.MenuIcon"></button>
+        </div>
+
+        <div class="space-y-6 px-4 py-5 lg:px-6">
+          @if (errorCount() > 0) {
+            <app-alert tone="danger" [heading]="'Please fix ' + errorCount() + (errorCount() === 1 ? ' field' : ' fields') + ' before saving.'">Required fields are marked with an asterisk.</app-alert>
+          }
+
+          <div class="space-y-3">
+            <div class="grid gap-x-3 gap-y-1 sm:grid-cols-[132px_minmax(0,1fr)] sm:items-start">
+              <span id="claimant-name-label" class="text-[13px] font-medium text-ink-700 sm:pt-2 sm:text-right">
+                Claimant Name<span class="ml-0.5 text-danger-600" aria-hidden="true">*</span>
+              </span>
+              <div role="group" aria-labelledby="claimant-name-label" class="grid gap-2 sm:grid-cols-[96px_1fr_1fr_1fr]">
+                <app-select>
+                  <select appControl aria-label="Prefix" name="prefix" [(ngModel)]="prefix">
+                    <option value="">Select</option>
+                    <option>Mr.</option>
+                    <option>Mrs.</option>
+                    <option>Ms.</option>
+                    <option>Dr.</option>
+                  </select>
+                </app-select>
+                <div>
+                  <input appControl id="claimant-first" aria-label="First name" placeholder="First name" name="first" [(ngModel)]="first" (ngModelChange)="clear('first')" [invalid]="!!errors().first" [attr.aria-describedby]="errors().first ? 'claimant-first-error' : null" />
+                  @if (errors().first) {
+                    <p id="claimant-first-error" class="mt-1 text-xs font-medium text-danger-700">{{ errors().first }}</p>
+                  }
+                </div>
+                <input appControl aria-label="Middle name" placeholder="Middle name" name="middle" [(ngModel)]="middle" />
+                <div>
+                  <input appControl id="claimant-last" aria-label="Last name" placeholder="Last name" name="last" [(ngModel)]="last" (ngModelChange)="clear('last')" [invalid]="!!errors().last" [attr.aria-describedby]="errors().last ? 'claimant-last-error' : null" />
+                  @if (errors().last) {
+                    <p id="claimant-last-error" class="mt-1 text-xs font-medium text-danger-700">{{ errors().last }}</p>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <app-field label="AKA" for="claimant-aka" layout="inline">
+              <input appControl="max-w-sm" id="claimant-aka" placeholder="Also Known As" name="aka" [(ngModel)]="aka" />
+            </app-field>
+
+            <div class="grid gap-x-3 gap-y-1 sm:grid-cols-[132px_minmax(0,1fr)] sm:items-start">
+              <label for="claimant-dob" class="text-[13px] font-medium text-ink-700 sm:pt-2 sm:text-right">
+                DOB<span class="ml-0.5 text-danger-600" aria-hidden="true">*</span>
+              </label>
+              <div class="flex flex-wrap items-start gap-x-6 gap-y-2">
+                <div>
+                  <input appControl="w-36" id="claimant-dob" placeholder="MM/DD/YYYY" inputmode="numeric" name="dob" [ngModel]="dob()" (ngModelChange)="dob.set($event); clear('dob')" [invalid]="!!errors().dob" [attr.aria-describedby]="errors().dob ? 'claimant-dob-error' : 'claimant-age'" />
+                  @if (errors().dob) {
+                    <p id="claimant-dob-error" class="mt-1 text-xs font-medium text-danger-700">{{ errors().dob }}</p>
+                  }
+                </div>
+                <p id="claimant-age" class="pt-2 text-[13px] text-ink-700">
+                  Age <span class="font-semibold text-ink-900">{{ age() ? age()!.years + ' Years ' + age()!.months + ' Mo.' : '—' }}</span>
+                </p>
+                <div class="flex items-start gap-2">
+                  <label for="claimant-gender" class="pt-2 text-[13px] font-medium text-ink-700">Gender<span class="ml-0.5 text-danger-600" aria-hidden="true">*</span></label>
+                  <div>
+                    <app-select class="w-32">
+                      <select appControl id="claimant-gender" name="gender" [(ngModel)]="gender" (ngModelChange)="clear('gender')" [invalid]="!!errors().gender" [attr.aria-describedby]="errors().gender ? 'claimant-gender-error' : null">
+                        <option value="">Select</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                      </select>
+                    </app-select>
+                    @if (errors().gender) {
+                      <p id="claimant-gender-error" class="mt-1 text-xs font-medium text-danger-700">{{ errors().gender }}</p>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-3 border-t border-ink-100 pt-5">
+            <div class="grid gap-x-3 gap-y-1 sm:grid-cols-[132px_minmax(0,1fr)]">
+              <span class="hidden sm:block"></span>
+              <fieldset class="flex flex-wrap gap-x-5 gap-y-2">
+                <legend class="sr-only">Case flags</legend>
+                @for (f of flagList; track f.key) {
+                  <label appChoice>
+                    <input type="checkbox" [class]="choiceInput" [name]="'flag-' + f.key" [(ngModel)]="flags[f.key]" />
+                    {{ f.label }}
+                  </label>
+                }
+              </fieldset>
+            </div>
+            <div class="grid gap-x-3 gap-y-1 sm:grid-cols-[132px_minmax(0,1fr)] sm:items-start">
+              <label for="claimant-status" class="text-[13px] font-medium text-ink-700 sm:pt-2 sm:text-right">Status</label>
+              <div class="grid gap-2 sm:max-w-lg sm:grid-cols-2">
+                <app-select>
+                  <select appControl id="claimant-status" name="status" [(ngModel)]="status">
+                    @for (s of statuses; track s) {
+                      <option [value]="s">{{ s }}</option>
+                    }
+                  </select>
+                </app-select>
+                <div>
+                  <app-select>
+                    <select appControl id="claimant-underwriter" aria-label="Assigned underwriter" name="underwriter" [(ngModel)]="underwriter" [invalid]="!!errors().underwriter">
+                      <option value="">Select underwriter</option>
+                      @for (u of underwriters; track u) {
+                        <option [value]="u">{{ u }}</option>
+                      }
+                    </select>
+                  </app-select>
+                  @if (errors().underwriter) {
+                    <p class="mt-1 text-xs font-medium text-danger-700">{{ errors().underwriter }}</p>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <section aria-labelledby="medicals-title" class="border-t border-ink-100 pt-5">
+            <h2 id="medicals-title" class="text-sm font-semibold text-ink-900">Medical(s)</h2>
+            <div class="mt-3 grid gap-x-3 gap-y-1 sm:grid-cols-[132px_minmax(0,1fr)]">
+              <span id="attach-medical-label" class="text-[13px] font-medium text-ink-700 sm:text-right">Attach Medical</span>
+              <div role="radiogroup" aria-labelledby="attach-medical-label" class="flex flex-wrap gap-x-5 gap-y-2">
+                @for (o of attachOptions; track o.value) {
+                  <label appChoice>
+                    <input type="radio" class="focus-ring h-4 w-4 shrink-0 cursor-pointer accent-brand-600" name="attach-medical" [value]="o.value" [(ngModel)]="attachMedical" />
+                    {{ o.label }}
+                  </label>
+                }
+              </div>
+            </div>
+          </section>
+
+          <section aria-labelledby="brokers-title" class="border-t border-ink-100 pt-5">
+            <h2 id="brokers-title" class="text-sm font-semibold text-ink-900">Broker(s)</h2>
+            <div class="mt-3 overflow-x-auto rounded-md border border-ink-200">
+              <table class="w-full text-[13px]">
+                <thead class="bg-ink-50 text-left text-xs font-semibold text-ink-700">
+                  <tr>
+                    <th scope="col" class="px-3 py-2">Broker Name</th>
+                    <th scope="col" class="px-3 py-2">Broker City</th>
+                    <th scope="col" class="px-3 py-2">Broker Contact</th>
+                    <th scope="col" class="px-3 py-2">Email/Fax</th>
+                    <th scope="col" class="w-12 px-3 py-2"><span class="sr-only">Remove</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (b of brokers(); track b.id) {
+                    <tr class="border-t border-ink-100">
+                      <td class="px-3 py-2 font-medium">{{ b.name }}</td>
+                      <td class="px-3 py-2">{{ b.city }}</td>
+                      <td class="px-3 py-2">{{ b.contact }}</td>
+                      <td class="px-3 py-2">{{ b.emailFax }}</td>
+                      <td class="px-3 py-1.5 text-center">
+                        <button appIconButton [label]="'Remove ' + b.name" variant="danger" size="sm" [icon]="i.CircleMinusIcon" (click)="removeBroker(b.id)"></button>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr class="border-t border-ink-100">
+                      <td colspan="5" class="px-3 py-6 text-center text-ink-500">No Records Found</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <div class="sticky bottom-0 flex justify-center gap-2 border-t border-ink-200 bg-white/95 px-4 py-3 backdrop-blur">
+          <button appButton type="submit" variant="primary" [loading]="saving() === 'close'" [disabled]="!!saving() && saving() !== 'close'">Save &amp; Close</button>
+          <button appButton (click)="submit('open')" [loading]="saving() === 'open'" [disabled]="!!saving() && saving() !== 'open'">Save &amp; Open</button>
+          <button appButton variant="danger" [disabled]="!!saving()" (click)="cancel()">Cancel</button>
+        </div>
+      </form>
+
+      <div class="min-w-0">
+        <app-email-viewer [inbox]="item" [email]="email()!" compact (reply)="reply($event)" (trash)="cancel()" (openAttachment)="openAttachment($event.id)" />
+      </div>
+    </div>
+  </div>
+} @else {
+  <app-not-found heading="Email not found" [icon]="i.MailXIcon" />
+}

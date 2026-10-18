@@ -1,0 +1,139 @@
+<ng-template #hint let-text>
+  <span [appTooltip]="text" tabindex="0" class="focus-ring inline-flex rounded text-brand-600">
+    <lucide-icon [img]="i.InfoIcon" class="h-4 w-4" aria-hidden="true" />
+    <span class="sr-only">{{ text }}</span>
+  </span>
+</ng-template>
+
+@if (caseRecord(); as c) {
+  <app-case-layout [caseRecord]="c" [heading]="'Rating Activity for ' + c.claimantName">
+    <button titleAction appIconButton="text-brand-600" label="Add rating activity" size="sm" [icon]="i.CirclePlusIcon"></button>
+
+    <app-panel heading="Edit Rating Activity">
+      <div panelActions class="flex flex-wrap items-center gap-1.5">
+        <button appButton size="sm" variant="primary" [leadingIcon]="i.SaveIcon" [loading]="saving() === 'save'" (click)="save()">Save</button>
+        <button appButton size="sm" variant="danger" [leadingIcon]="i.CircleXIcon" [disabled]="!!saving()" (click)="cancel()">Cancel</button>
+        <button appButton size="sm" [leadingIcon]="i.StickyNoteIcon" [loading]="saving() === 'note'" (click)="saveNote()">Save Note</button>
+      </div>
+
+      @if (errors().calc) {
+        <app-alert tone="warning" class="mb-4">{{ errors().calc }}</app-alert>
+      }
+      <div class="grid gap-x-8 gap-y-6 lg:grid-cols-2 2xl:grid-cols-[1fr_1fr_1.3fr]">
+        <div class="space-y-3">
+          <app-field label="Date Evaluated" for="ra-date" layout="inline" [error]="errors().dateEvaluated">
+            <input appControl="w-36" id="ra-date" [(ngModel)]="dateEvaluated" (ngModelChange)="clearError('dateEvaluated')" [invalid]="!!errors().dateEvaluated" [attr.aria-describedby]="errors().dateEvaluated ? 'ra-date-error' : null" />
+          </app-field>
+          <dl>
+            <div appValueRow label="DOB">{{ c.dob }}</div>
+            <div appValueRow label="Age">{{ age() }}</div>
+            <div appValueRow label="Gender">{{ c.gender }}</div>
+          </dl>
+          <app-field label="Mult Method" for="ra-method" layout="inline">
+            <app-select class="w-36">
+              <select appControl id="ra-method" [(ngModel)]="multMethod">
+                @for (m of multMethods; track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </app-select>
+          </app-field>
+          <app-field label="Mult (%)" for="ra-mult" layout="inline" [error]="errors().mult">
+            <div class="flex items-center gap-2">
+              <input appControl="w-36" id="ra-mult" inputmode="numeric" [(ngModel)]="mult" (ngModelChange)="clearError('mult')" [invalid]="!!errors().mult" [attr.aria-describedby]="errors().mult ? 'ra-mult-error' : null" />
+              <ng-container *ngTemplateOutlet="hint; context: { $implicit: 'Mortality multiplier applied to the standard life expectancy table (100 = standard).' }" />
+            </div>
+          </app-field>
+          <div class="sm:pl-[144px]">
+            <button appButton [leadingIcon]="i.CalculatorIcon" [loading]="calculating()" (click)="calculate()">Calculate Rated Age</button>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <app-field label="Underwriter" for="ra-underwriter" layout="inline">
+            <app-select class="max-w-[220px]">
+              <select appControl id="ra-underwriter" [(ngModel)]="underwriter">
+                @for (u of underwriters; track u) {
+                  <option [value]="u">{{ u }}</option>
+                }
+              </select>
+            </app-select>
+          </app-field>
+          <dl aria-live="polite" class="transition-opacity duration-150" [class.opacity-50]="calculating()">
+            <div appValueRow label="Normal L.E.">{{ fmt(results()?.normalLE) }}</div>
+            <div appValueRow label="75% Normal L.E.">{{ fmt(results()?.normalLE75) }}</div>
+            <div appValueRow label="Estimated L.E.">{{ fmt(results()?.estimatedLE) }}</div>
+            <div appValueRow label="Rated Age">{{ results()?.ratedAge ?? '—' }}</div>
+            <div class="grid grid-cols-[132px_minmax(0,1fr)] items-center gap-3 py-1">
+              <dt class="text-right text-[13px] text-ink-500">Final Rated Age</dt>
+              <dd class="flex items-center gap-1.5">
+                <button appIconButton label="Decrease final rated age" variant="danger" size="sm" [icon]="i.CircleMinusIcon" [disabled]="finalRatedAge() === null || finalRatedAge()! <= age()" (click)="adjustFinal(-1)"></button>
+                <output aria-label="Final Rated Age" class="min-w-[44px] rounded-md border border-ink-200 bg-ink-50 px-2 py-1 text-center text-sm font-semibold tabular-nums text-danger-600">{{ finalRatedAge() ?? '—' }}</output>
+                <button appIconButton="text-success-700 hover:bg-success-50" label="Increase final rated age" size="sm" [icon]="i.CirclePlusIcon" [disabled]="finalRatedAge() === null" (click)="adjustFinal(1)"></button>
+                <ng-container *ngTemplateOutlet="hint; context: { $implicit: 'Adjust only when the underwriter overrides the calculated rated age.' }" />
+              </dd>
+            </div>
+            <div appValueRow label="# Yrs Rated Up">{{ ratedUp() }}</div>
+          </dl>
+          <app-field label="Response Date" for="ra-response" layout="inline" [error]="errors().responseDate">
+            <input appControl="w-36" id="ra-response" [(ngModel)]="responseDate" (ngModelChange)="clearError('responseDate')" [invalid]="!!errors().responseDate" />
+          </app-field>
+          <app-field label="Expiration Date" for="ra-expiration" layout="inline" [error]="errors().expirationDate">
+            <div class="flex items-center gap-2">
+              <input appControl="w-36" id="ra-expiration" [(ngModel)]="expirationDate" (ngModelChange)="clearError('expirationDate')" [invalid]="!!errors().expirationDate" />
+              <ng-container *ngTemplateOutlet="hint; context: { $implicit: 'Rated age confirmations are valid for 12 months from the date evaluated.' }" />
+            </div>
+          </app-field>
+        </div>
+
+        <div class="lg:col-span-2 2xl:col-span-1 2xl:row-span-2">
+          <app-rich-text-editor id="ra-note" label="Underwriter Note" [initialHtml]="noteHtml" [minHeight]="260" (textChange)="onNote($event)" />
+        </div>
+
+        <section aria-labelledby="impairment-title" class="space-y-4 border-t border-ink-100 pt-5 lg:col-span-2">
+          <h3 id="impairment-title" class="text-sm font-semibold text-ink-900">Impairment Codes</h3>
+          <app-field label="Primary Impairment Code" for="ra-primary" layout="inline" fieldClass="sm:grid-cols-[170px_minmax(0,1fr)]">
+            <app-select class="max-w-lg">
+              <select appControl id="ra-primary" [(ngModel)]="primaryCode">
+                @for (code of impairmentCodes; track code.code) {
+                  <option [value]="code.code">{{ code.label }}</option>
+                }
+              </select>
+            </app-select>
+          </app-field>
+          <div class="rounded-md border border-ink-200">
+            <div class="flex items-center gap-1.5 px-4 pt-3">
+              <h4 class="text-[13px] font-semibold text-ink-900">Secondary Impairment Codes</h4>
+              <button appIconButton="text-brand-600" label="Add secondary impairment code" size="sm" [icon]="i.CirclePlusIcon" (click)="addOpen.set(true)"></button>
+            </div>
+            <app-data-table id="secondary-codes" label="Secondary Impairment Codes" toolbar="search" [columns]="secondaryColumns" [rows]="secondaryCodes()" [defaultPageSize]="10" [rowId]="codeId" [searchText]="codeText">
+              <ng-template appCell="remove" let-code>
+                <button appIconButton [label]="'Remove ' + codeLabel(code)" variant="danger" size="sm" [icon]="i.CircleMinusIcon" (click)="removeCode(code)"></button>
+              </ng-template>
+            </app-data-table>
+          </div>
+        </section>
+      </div>
+    </app-panel>
+
+    <app-modal [open]="addOpen()" heading="Add secondary impairment code" (closed)="addOpen.set(false)">
+      <app-field label="Impairment Code" for="add-code">
+        <app-select>
+          <select appControl id="add-code" [(ngModel)]="codeToAdd">
+            @for (code of impairmentCodes; track code.code) {
+              @if (code.code !== primaryCode) {
+                <option [value]="code.code">{{ code.label }}</option>
+              }
+            }
+          </select>
+        </app-select>
+      </app-field>
+      <div modalFooter class="contents">
+        <button appButton (click)="addOpen.set(false)">Cancel</button>
+        <button appButton variant="primary" (click)="addCode()">Add Code</button>
+      </div>
+    </app-modal>
+  </app-case-layout>
+} @else {
+  <app-not-found />
+}
