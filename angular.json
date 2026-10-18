@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "angular-app": {
+    "flowrocket": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:class": {
@@ -90,10 +90,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "angular-app:build:production"
+              "buildTarget": "flowrocket:build:production"
             },
             "development": {
-              "buildTarget": "angular-app:build:development"
+              "buildTarget": "flowrocket:build:development"
             }
           },
           "defaultConfiguration": "development"

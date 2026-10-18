@@ -1,7 +1,7 @@
-export default {
+module.exports = {
   content: [
-  './index.html',
-  './src/**/*.{js,ts,jsx,tsx}'
+  './src/**/*.{html,ts}',
+  './src/index.html'
 ],
   theme: {
     extend: {
@@ -60,6 +60,8 @@ export default {
         xs: '0 1px 2px rgba(16, 24, 40, 0.05)',
         card: '0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06)',
         overlay: '0 16px 40px -12px rgba(16, 24, 40, 0.28)',
+        raised: '0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 12px -2px rgba(16, 24, 40, 0.08)',
+        lifted: '0 2px 4px rgba(16, 24, 40, 0.04), 0 12px 24px -6px rgba(16, 24, 40, 0.14)',
       },
     },
   },

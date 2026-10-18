@@ -1,8 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "installCommand": "cd angular-app && npm ci",
-  "buildCommand": "cd angular-app && npm run build",
-  "outputDirectory": "angular-app/dist/angular-app/browser",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "framework": "angular",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/flowrocket/browser",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
