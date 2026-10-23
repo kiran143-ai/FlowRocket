@@ -11,9 +11,9 @@
 
     <app-panel heading="Edit Rating Activity">
       <div panelActions class="flex flex-wrap items-center gap-1.5">
-        <button appButton size="sm" variant="primary" [leadingIcon]="i.SaveIcon" [loading]="saving() === 'save'" (click)="save()">Save</button>
-        <button appButton size="sm" variant="danger" [leadingIcon]="i.CircleXIcon" [disabled]="!!saving()" (click)="cancel()">Cancel</button>
         <button appButton size="sm" [leadingIcon]="i.StickyNoteIcon" [loading]="saving() === 'note'" (click)="saveNote()">Save Note</button>
+        <button appButton size="sm" variant="danger" [leadingIcon]="i.CircleXIcon" [disabled]="!!saving()" (click)="cancel()">Cancel</button>
+        <button appButton size="sm" variant="primary" [leadingIcon]="i.SaveIcon" [loading]="saving() === 'save'" (click)="save()">Save</button>
       </div>
 
       @if (errors().calc) {

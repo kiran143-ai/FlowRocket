@@ -32,8 +32,8 @@
       <span>yrs</span>
     </div>
     <div class="flex justify-center gap-2 pt-1">
-      <button appButton type="submit" variant="primary" size="sm" [leadingIcon]="icons.SearchIcon" [loading]="status() === 'searching'">Search</button>
       <button appButton size="sm" variant="danger" (click)="cancel()">Cancel</button>
+      <button appButton type="submit" variant="primary" size="sm" [leadingIcon]="icons.SearchIcon" [loading]="status() === 'searching'">Search</button>
     </div>
   </form>
 
