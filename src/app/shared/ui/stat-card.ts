@@ -25,32 +25,34 @@ const tones: Record<StatTone, { bar: string; chip: string; active: string; badge
   template: `
     <ng-template #body>
       <span [class]="barClass()" aria-hidden="true"></span>
-      <div class="flex flex-1 flex-col p-5">
-        <div class="flex items-center justify-between gap-3">
-          <span [class]="chipClass()" aria-hidden="true"><lucide-icon [img]="icon()" class="h-5 w-5" /></span>
+      <div class="flex flex-1 flex-col justify-center px-4 pb-2.5 pt-3.5">
+        <div class="flex items-center gap-3">
+          <span [class]="chipClass()" aria-hidden="true"><lucide-icon [img]="icon()" class="h-4 w-4" /></span>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2">
+              <p class="text-2xl font-semibold leading-none tracking-tight tabular-nums text-ink-900">{{ value() }}</p>
+              @if (badge()) {
+                <span [class]="badgeClass()">
+                  <span class="relative flex h-1.5 w-1.5" aria-hidden="true">
+                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-60 motion-reduce:hidden"></span>
+                    <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-current"></span>
+                  </span>
+                  {{ badge() }}
+                </span>
+              }
+            </div>
+            <p class="mt-1 truncate text-[13px] font-semibold text-ink-900">{{ label() }}</p>
+          </div>
           @if (eyebrow()) {
-            <span class="text-[11px] font-semibold uppercase tracking-wider text-ink-400">{{ eyebrow() }}</span>
+            <span class="self-start text-[10px] font-semibold uppercase tracking-wider text-ink-400">{{ eyebrow() }}</span>
           }
         </div>
-        <div class="mt-4 flex items-center gap-2.5">
-          <p class="text-[32px] font-semibold leading-none tracking-tight tabular-nums text-ink-900">{{ value() }}</p>
-          @if (badge()) {
-            <span [class]="badgeClass()">
-              <span class="relative flex h-1.5 w-1.5" aria-hidden="true">
-                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-60 motion-reduce:hidden"></span>
-                <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-current"></span>
-              </span>
-              {{ badge() }}
-            </span>
-          }
-        </div>
-        <p class="mt-2 text-sm font-semibold text-ink-900">{{ label() }}</p>
         @if (hint()) {
-          <p class="mt-1 text-xs leading-5 text-ink-500">{{ hint() }}</p>
+          <p class="mt-1.5 truncate text-xs text-ink-500" [attr.title]="hint()">{{ hint() }}</p>
         }
       </div>
       @if (action()) {
-        <span class="flex items-center justify-between border-t border-ink-100 px-5 py-2.5 text-xs font-semibold text-brand-700 transition-colors duration-150 group-hover:bg-ink-50/70 group-hover:text-brand-900">
+        <span class="flex items-center justify-between border-t border-ink-100 px-4 py-1.5 text-xs font-semibold text-brand-700 transition-colors duration-150 group-hover:bg-ink-50/70 group-hover:text-brand-900">
           {{ action() }}
           <lucide-icon [img]="ArrowRightIcon" class="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
         </span>
@@ -82,7 +84,7 @@ export class StatCard {
   protected readonly ArrowRightIcon = ArrowRightIcon;
 
   protected readonly barClass = computed(() => cn('absolute inset-x-0 top-0 h-1', tones[this.tone()].bar));
-  protected readonly chipClass = computed(() => cn('grid h-10 w-10 shrink-0 place-items-center rounded-lg ring-1 ring-inset', tones[this.tone()].chip));
+  protected readonly chipClass = computed(() => cn('grid h-9 w-9 shrink-0 place-items-center rounded-lg ring-1 ring-inset', tones[this.tone()].chip));
   protected readonly badgeClass = computed(() => cn('inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold', tones[this.tone()].badge));
   protected readonly cardClass = computed(() =>
     cn(
