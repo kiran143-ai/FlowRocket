@@ -32,6 +32,31 @@
             <input appControl="max-w-2xl" id="wall-subject" name="subject" [ngModel]="subject()" (ngModelChange)="subject.set($event)" [invalid]="!!errors().subject" [attr.aria-describedby]="errors().subject ? 'wall-subject-error' : null" />
           </app-field>
 
+          @if (attachments().length) {
+            <div>
+              <p class="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-ink-700">
+                <lucide-icon [img]="i.PaperclipIcon" class="h-3.5 w-3.5" aria-hidden="true" />
+                Attachments ({{ attachments().length }})
+              </p>
+              <ul class="space-y-2">
+                @for (a of attachments(); track a.id) {
+                  <li class="flex items-center gap-3 rounded-md border border-ink-200 bg-ink-50 px-3 py-2">
+                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded bg-danger-50 text-danger-600" aria-hidden="true">
+                      <lucide-icon [img]="i.FileTextIcon" class="h-4 w-4" />
+                    </span>
+                    <div class="min-w-0 flex-1">
+                      <p class="truncate text-[13px] font-medium text-ink-900">{{ a.name }}</p>
+                      <p class="truncate text-xs text-ink-500">{{ a.title }}</p>
+                    </div>
+                    <button type="button" appIconButton [label]="'Preview ' + a.name" size="sm" [icon]="i.EyeIcon" (click)="preview(a)"></button>
+                    <button type="button" appIconButton [label]="'Download ' + a.name" size="sm" [icon]="i.DownloadIcon" (click)="download(a)"></button>
+                    <button type="button" appIconButton [label]="'Remove ' + a.name" size="sm" variant="danger" [icon]="i.XIcon" (click)="remove(a.id)"></button>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
           <app-rich-text-editor id="wall-message" label="Message" [initialHtml]="quoted()" [minHeight]="240" />
         </div>
 

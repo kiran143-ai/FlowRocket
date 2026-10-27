@@ -1,21 +1,21 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CirclePlusIcon, LucideAngularModule, MailXIcon, MessageSquareIcon, PlusIcon, SendIcon } from 'lucide-angular';
+import { CirclePlusIcon, DownloadIcon, EyeIcon, FileTextIcon, LucideAngularModule, MailXIcon, MessageSquareIcon, PaperclipIcon, PlusIcon, SendIcon, XIcon } from 'lucide-angular';
 import { toast } from 'ngx-sonner';
 import { NotFound } from '../../case/case-not-found';
 import { mailboxes, postOnOptions } from '../../core/data/underwriters';
 import { WorkspaceService } from '../../core/services/workspace.service';
-import { Recipients, ReplyMode } from '../../core/types/workspace';
+import { Attachment, Recipients, ReplyMode } from '../../core/types/workspace';
 import { getEmail, quoteEmailHtml } from '../../core/utils/email';
 import { RecipientFields } from '../../email/recipient-fields';
 import { RichTextEditor } from '../../email/rich-text-editor';
 import { WindowBar } from '../../layout/window-bar';
-import { Button, Control, Field, SelectShell } from '../../shared/ui';
+import { Button, Control, Field, IconButton, SelectShell } from '../../shared/ui';
 
 @Component({
   selector: 'app-reply-to-broker',
-  imports: [FormsModule, LucideAngularModule, NotFound, RecipientFields, RichTextEditor, WindowBar, Button, Control, Field, SelectShell],
+  imports: [FormsModule, LucideAngularModule, NotFound, RecipientFields, RichTextEditor, WindowBar, Button, Control, Field, IconButton, SelectShell],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './reply-to-broker.html'
 })
@@ -49,12 +49,29 @@ export class ReplyToBroker {
     const item = this.item();
     return item ? `${this.replyMode() === 'forward' ? 'FW' : 'RE'}: ${item.subject}` : '';
   });
+  /** The original email's attachments travel with the reply; the user can drop any of them. */
+  protected readonly attachments = linkedSignal<Attachment[]>(() => {
+    const item = this.item();
+    return item ? getEmail(item).attachments : [];
+  });
   protected readonly errors = signal<{ to?: string; subject?: string }>({});
   protected readonly sending = signal(false);
 
   protected readonly mailboxes = mailboxes;
   protected readonly postOnOptions = postOnOptions;
-  protected readonly i = { CirclePlusIcon, MailXIcon, MessageSquareIcon, PlusIcon, SendIcon };
+  protected readonly i = { CirclePlusIcon, DownloadIcon, EyeIcon, FileTextIcon, MailXIcon, MessageSquareIcon, PaperclipIcon, PlusIcon, SendIcon, XIcon };
+
+  protected preview(a: Attachment): void {
+    this.router.navigate(['/document', a.id], { queryParams: { from: this.emailId() } });
+  }
+
+  protected download(a: Attachment): void {
+    toast.success(`Downloading ${a.name}`);
+  }
+
+  protected remove(id: string): void {
+    this.attachments.update((list) => list.filter((a) => a.id !== id));
+  }
 
   protected back(): void {
     this.router.navigate(['/email', this.emailId()]);

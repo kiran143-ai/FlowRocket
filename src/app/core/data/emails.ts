@@ -2,6 +2,17 @@ import { EmailMessage } from '../types/workspace';
 
 export const emails: EmailMessage[] = [
 {
+  inboxId: 'in-1',
+  sentAt: '03/30/2026 12:44 PM',
+  claimantLine: 'Rated Age request',
+  to: 'SS Medicals <ssmedicals@newyorklife.com>',
+  attachments: [
+  { id: 'att-chron1', name: 'Rated Age request - medical records.pdf', title: 'Rated Age request - medical records' }],
+
+  body: [['Hello,'], ['Please see the request regarding: Rated Age request.'], ['Thank you,']],
+  signature: ['AHernandez HOSCHT.CHRON']
+},
+{
   inboxId: 'in-5',
   sentAt: 'Wed, 4/1/2026 01:46:21 PM',
   claimantLine: 'Jon Eldridge',

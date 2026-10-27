@@ -44,7 +44,11 @@
     <p class="mt-0.5 text-sm font-semibold text-ink-900">{{ mail.claimantLine }}</p>
     <p class="mt-1 text-xs text-ink-500"><span class="font-medium text-ink-700">To</span> {{ mail.to }}</p>
     @if (mail.attachments.length) {
-      <ul aria-label="Attachments" class="mt-3 flex flex-wrap gap-2">
+      <p class="mt-3 flex items-center gap-1.5 text-xs font-medium text-ink-700">
+        <lucide-icon [img]="i.PaperclipIcon" class="h-3.5 w-3.5" aria-hidden="true" />
+        {{ mail.attachments.length }} {{ mail.attachments.length === 1 ? 'Attachment' : 'Attachments' }}
+      </p>
+      <ul aria-label="Attachments" class="mt-1.5 flex flex-wrap gap-2">
         @for (a of mail.attachments; track a.id) {
           <li class="inline-flex items-center rounded-md border border-ink-200 bg-white shadow-xs">
             <button type="button" (click)="openAttachment.emit(a)" class="focus-ring inline-flex items-center gap-1.5 rounded-l-md py-1 pl-2 pr-2.5 text-[13px] font-medium text-brand-700 transition-colors duration-150 hover:bg-brand-50">

@@ -1,5 +1,5 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { ChevronsLeftIcon, ChevronsRightIcon, DownloadIcon, FileTextIcon, ForwardIcon, LucideAngularModule, ReplyAllIcon, ReplyIcon, Trash2Icon } from 'lucide-angular';
+import { ChevronsLeftIcon, ChevronsRightIcon, DownloadIcon, FileTextIcon, ForwardIcon, LucideAngularModule, PaperclipIcon, ReplyAllIcon, ReplyIcon, Trash2Icon } from 'lucide-angular';
 import { toast } from 'ngx-sonner';
 import { Attachment, EmailMessage, InboxItem, ReplyMode } from '../core/types/workspace';
 import { initialsOf } from '../core/utils/email';
@@ -25,7 +25,7 @@ export class EmailViewer {
   readonly openAttachment = output<Attachment>();
 
   protected readonly initialsOf = initialsOf;
-  protected readonly i = { ChevronsLeftIcon, ChevronsRightIcon, DownloadIcon, FileTextIcon, ForwardIcon, ReplyAllIcon, ReplyIcon, Trash2Icon };
+  protected readonly i = { ChevronsLeftIcon, ChevronsRightIcon, DownloadIcon, FileTextIcon, ForwardIcon, PaperclipIcon, ReplyAllIcon, ReplyIcon, Trash2Icon };
 
   protected download(a: Attachment): void {
     toast.success(`Downloading ${a.name}`);

@@ -5,7 +5,7 @@
       <button appButton size="sm" variant="ghost" [leadingIcon]="i.PlusIcon" (click)="alreadyAdding()">Add New Message</button>
     </div>
 
-    <form novalidate (ngSubmit)="send(c)" class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
+    <form novalidate (ngSubmit)="send(c)" class="grid items-start gap-5 xl:grid-cols-[minmax(0,720px)_minmax(0,1fr)]">
       <div class="space-y-5 rounded-lg border border-ink-200 bg-white p-5 shadow-xs">
         <app-recipient-fields idPrefix="msg" [(value)]="recipients" [fromOptions]="mailboxes" [toError]="errors().to" />
         <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_220px]">
