@@ -24,7 +24,7 @@ let nextId = 0;
       </h2>
       <ng-content select="[columnActions]" />
     </header>
-    <div class="flex-1 overflow-y-auto p-4 lg:max-h-[calc(100vh-420px)] lg:min-h-[320px]"><ng-content /></div>
+    <div class="flex-1 overflow-y-auto p-4 lg:max-h-[calc(100vh-420px)] lg:min-h-[320px] eg:lg:max-h-none"><ng-content /></div>
   `
 })
 export class ColumnPanel {
@@ -33,7 +33,7 @@ export class ColumnPanel {
   readonly tone = input.required<keyof typeof tones>();
   protected readonly titleId = `column-${++nextId}`;
   protected readonly classes = computed(() =>
-    cn('flex min-h-0 flex-col overflow-hidden rounded-xl border border-t-[3px] border-ink-200 bg-white shadow-raised', tones[this.tone()].bar)
+    cn('flex min-h-0 flex-col overflow-hidden rounded-xl border border-t-[3px] border-ink-200 bg-white shadow-raised eg:border-t eg:border-t-ink-200', tones[this.tone()].bar)
   );
   protected readonly chipClass = computed(() => cn('grid h-7 w-7 place-items-center rounded-md', tones[this.tone()].chip));
 }

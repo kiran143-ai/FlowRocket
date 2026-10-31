@@ -8,116 +8,294 @@
   </span>
 </ng-template>
 
-<div class="mx-auto w-full max-w-[1600px] space-y-6 p-4 lg:p-6">
-  <div class="flex flex-wrap items-end justify-between gap-3">
-    <div>
-      <p class="text-xs font-medium uppercase tracking-wider text-ink-400">{{ today }}</p>
-      <h1 class="mt-1 text-2xl font-semibold tracking-tight text-ink-900">{{ greeting }}, Lauren</h1>
-      <p class="mt-0.5 text-sm text-ink-500">Here’s where your rated-age requests stand, from first email to broker confirmation.</p>
+@if (theme.isEvergreen()) {
+  <div class="mx-auto w-full max-w-[1600px] space-y-5 p-4 lg:p-6">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <p class="text-[13px] text-ink-500">{{ today }}</p>
+        <h1 class="mt-1 text-[28px] font-semibold leading-tight tracking-tight text-ink-900">{{ greeting }}, Lauren</h1>
+        <p class="mt-1 text-sm text-ink-700">
+          {{ ws.queue().length }} open {{ ws.queue().length === 1 ? 'case' : 'cases' }} in your queue
+          @if (count('flagged') > 0) {
+            — <span class="font-semibold text-danger-600">{{ count('flagged') }} flagged for rush or rework</span>
+          }
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button appButton [leadingIcon]="i.ChartLineIcon" routerLink="/reports">View reports</button>
+        <button appButton variant="primary" [leadingIcon]="i.MailIcon" (click)="openInbox()">Review inbox</button>
+      </div>
     </div>
-    <button appButton size="sm" [leadingIcon]="i.ChartLineIcon" routerLink="/reports">View reports</button>
-  </div>
 
-  <section aria-labelledby="pipeline-heading">
-    <h2 id="pipeline-heading" class="sr-only">Case pipeline</h2>
-    <ol class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      @for (card of pipeline(); track card.eyebrow) {
-        <li>
-          <app-stat-card
-            [eyebrow]="card.eyebrow"
-            [label]="card.label"
-            [value]="card.value"
-            [icon]="card.icon"
-            [tone]="card.tone"
-            [hint]="card.hint"
-            [action]="card.action"
-            [active]="!!card.active"
-            [badge]="card.badge"
-            interactive
-            (activate)="card.run()" />
-        </li>
-      }
-    </ol>
+    <section aria-labelledby="pipeline-heading" class="rounded-xl border border-ink-200 bg-white shadow-raised">
+      <h2 id="pipeline-heading" class="sr-only">Case pipeline</h2>
+      <ol class="grid sm:grid-cols-2 xl:grid-cols-4 xl:divide-x xl:divide-ink-200">
+        @for (card of pipeline(); track card.eyebrow; let last = $last) {
+          <li class="relative">
+            <button
+              type="button"
+              [attr.aria-pressed]="!!card.active"
+              [attr.title]="card.hint"
+              (click)="card.run()"
+              class="focus-ring group flex h-full w-full flex-col gap-1 px-5 py-4 text-left transition-colors duration-150 hover:bg-ink-50 focus-visible:ring-inset"
+              [class.bg-brand-50]="card.active">
+              <span class="flex items-center justify-between gap-2">
+                <span class="text-[11px] font-semibold uppercase tracking-wider text-ink-500">{{ card.eyebrow }}</span>
+                <lucide-icon [img]="card.icon" class="h-4 w-4 text-ink-500" aria-hidden="true" />
+              </span>
+              <span class="flex items-center gap-2.5">
+                <span class="text-[32px] font-semibold leading-none tracking-tight tabular-nums text-ink-900">{{ card.value }}</span>
+                @if (card.badge) {
+                  <app-badge tone="warning" dot>{{ card.badge }}</app-badge>
+                }
+              </span>
+              <span class="text-sm font-semibold text-ink-900">{{ card.label }}</span>
+              <span class="sr-only">{{ card.hint }}</span>
+              <span class="mt-0.5 inline-flex items-center gap-1 text-xs font-semibold text-brand-700 group-hover:text-brand-900">
+                {{ card.action }}
+                <lucide-icon [img]="i.ArrowRightIcon" class="h-3.5 w-3.5 transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
+              </span>
+            </button>
+            @if (!last) {
+              <lucide-icon [img]="i.ChevronRightIcon" class="absolute right-0 top-1/2 z-10 hidden h-5 w-5 -translate-y-1/2 translate-x-1/2 rounded-full bg-white text-ink-400 xl:block" aria-hidden="true" />
+            }
+          </li>
+        }
+      </ol>
+    </section>
+
     @if (count('flagged') > 0) {
-      <button type="button" (click)="showQueue('flagged')" class="focus-ring mt-3 inline-flex items-center gap-2 rounded-md bg-warning-50 px-3 py-2 text-[13px] text-warning-700 ring-1 ring-inset ring-warning-100 hover:bg-warning-100">
+      <button type="button" (click)="showQueue('flagged')" class="focus-ring inline-flex items-center gap-2 rounded-md bg-warning-50 px-3 py-2 text-[13px] text-warning-700 ring-1 ring-inset ring-warning-100 hover:bg-warning-100">
         <lucide-icon [img]="i.FlagIcon" class="h-4 w-4" aria-hidden="true" />
         <span><span class="font-semibold">{{ count('flagged') }} cases flagged for rush or rework</span> — review these first.</span>
       </button>
     }
-  </section>
 
-  <div #queueEl class="scroll-mt-28">
-    <app-panel heading="My Underwriter Work Queue" [count]="filteredQueue().length" bodyClass="p-0">
-      <div panelActions role="group" aria-label="Filter work queue" class="flex flex-wrap items-center gap-1">
-        @for (f of filters; track f.id) {
-          <button type="button" [attr.aria-pressed]="filter() === f.id" (click)="filter.set(f.id)" [class]="chipClass(filter() === f.id)">
-            {{ f.label }}
-            <span class="tabular-nums" [class]="filter() === f.id ? 'text-white/80' : 'text-ink-500'">{{ count(f.id) }}</span>
-          </button>
-        }
-        @if (filter() !== 'all') {
-          <button appIconButton label="Clear filter" size="sm" [icon]="i.XIcon" (click)="filter.set('all')"></button>
-        }
+    <div class="grid items-start gap-5 min-[1680px]:grid-cols-[minmax(0,1fr)_340px]">
+      <div #queueEl class="scroll-mt-28 overflow-hidden rounded-xl border border-ink-200 bg-white shadow-raised">
+        <app-tabs class="px-3 pt-1" idPrefix="lists" label="Work lists" [items]="listTabs()" [(value)]="listTab" />
+        <div [id]="'lists-panel-' + listTab()" role="tabpanel" [attr.aria-labelledby]="'lists-tab-' + listTab()">
+          @switch (listTab()) {
+            @case ('queue') {
+              <div role="group" aria-label="Filter work queue" class="flex flex-wrap items-center gap-1.5 border-b border-ink-100 px-4 py-3">
+                @for (f of filters; track f.id) {
+                  <button type="button" [attr.aria-pressed]="filter() === f.id" (click)="filter.set(f.id)" [class]="chipClass(filter() === f.id)">
+                    {{ f.label }}
+                    <span class="tabular-nums" [class]="filter() === f.id ? 'text-white/80' : 'text-ink-500'">{{ count(f.id) }}</span>
+                  </button>
+                }
+                @if (filter() !== 'all') {
+                  <button appIconButton label="Clear filter" size="sm" [icon]="i.XIcon" (click)="filter.set('all')"></button>
+                }
+              </div>
+              <app-data-table
+                id="work-queue"
+                label="My Underwriter Work Queue"
+                [columns]="queueColumns"
+                [rows]="filteredQueue()"
+                [rowId]="queueId"
+                [searchText]="queueText"
+                [rowClass]="queueRowClass"
+                emptyMessage="No cases match this filter.">
+                <ng-template appCell="rush" let-r><app-flag-indicator kind="rush" [active]="r.rush" /></ng-template>
+                <ng-template appCell="rework" let-r><app-flag-indicator kind="rework" [active]="r.rework" /></ng-template>
+                <ng-template appCell="claimant" let-r><a [routerLink]="['/case', r.caseNumber]" class="link whitespace-nowrap">{{ r.claimant }}</a></ng-template>
+                <ng-template appCell="sender" let-r><ng-container *ngTemplateOutlet="sender; context: { $implicit: r.sender }" /></ng-template>
+                <ng-template appCell="status" let-r><app-status-badge [status]="r.status" /></ng-template>
+              </app-data-table>
+            }
+            @case ('secondary') {
+              <app-data-table id="secondary-review" label="Secondary Review" [columns]="secondaryColumns" [rows]="secondaryReviewItems" [rowId]="secondaryId" [searchText]="secondaryText">
+                <ng-template appCell="rush" let-r><app-flag-indicator kind="rush" [active]="r.rush" /></ng-template>
+                <ng-template appCell="rework" let-r><app-flag-indicator kind="rework" [active]="r.rework" /></ng-template>
+              </app-data-table>
+            }
+            @case ('return') {
+              <app-data-table id="return-email-receipt" label="Return Email Receipt" [columns]="returnColumns" [rows]="returnEmailReceipts" [defaultPageSize]="5" [rowId]="returnId" [searchText]="returnText" />
+            }
+          }
+        </div>
       </div>
-      <app-data-table
-        id="work-queue"
-        label="My Underwriter Work Queue"
-        [columns]="queueColumns"
-        [rows]="filteredQueue()"
-        [rowId]="queueId"
-        [searchText]="queueText"
-        [rowClass]="queueRowClass"
-        emptyMessage="No cases match this filter.">
-        <ng-template appCell="rush" let-r><app-flag-indicator kind="rush" [active]="r.rush" /></ng-template>
-        <ng-template appCell="rework" let-r><app-flag-indicator kind="rework" [active]="r.rework" /></ng-template>
-        <ng-template appCell="claimant" let-r><a [routerLink]="['/case', r.caseNumber]" class="link whitespace-nowrap">{{ r.claimant }}</a></ng-template>
-        <ng-template appCell="sender" let-r><ng-container *ngTemplateOutlet="sender; context: { $implicit: r.sender }" /></ng-template>
-        <ng-template appCell="status" let-r><app-status-badge [status]="r.status" /></ng-template>
-      </app-data-table>
-    </app-panel>
-  </div>
 
-  <div #inboxEl class="scroll-mt-28">
-    <app-panel heading="SS Medicals Inbox" [icon]="i.MailIcon" [count]="ws.inbox().length" bodyClass="p-0">
-      <app-data-table id="ss-medicals-inbox" label="SS Medicals Inbox" [columns]="inboxColumns" [rows]="ws.inbox()" [rowId]="inboxId" [searchText]="inboxText">
-        <ng-template appCell="replied" let-r>
-          @if (r.replied) {
-            <span appTooltip="Replied" tabindex="0" class="focus-ring inline-flex rounded text-brand-600">
-              <lucide-icon [img]="i.ReplyIcon" class="h-4 w-4" aria-hidden="true" />
-              <span class="sr-only">Replied</span>
-            </span>
+      <div class="grid items-start gap-5 md:grid-cols-2 min-[1680px]:grid-cols-1">
+        <section #inboxEl aria-labelledby="rail-inbox" class="scroll-mt-28 overflow-hidden rounded-xl border border-ink-200 bg-white shadow-raised">
+          <header class="flex items-center justify-between gap-2 border-b border-ink-100 px-4 py-3">
+            <div class="flex min-w-0 items-center gap-2">
+              <h2 id="rail-inbox" class="truncate text-[15px] font-semibold text-ink-900">SS Medicals Inbox</h2>
+              <app-badge tone="warning">{{ unreplied() }} unreplied</app-badge>
+            </div>
+            <button type="button" class="link inline-flex items-center gap-1 text-[13px]" (click)="openInbox()">
+              Open
+              <lucide-icon [img]="i.ArrowRightIcon" class="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+          </header>
+          @if (ws.inbox().length) {
+            <ul class="max-h-[440px] divide-y divide-ink-100 overflow-y-auto">
+              @for (r of ws.inbox(); track r.id) {
+                <li class="relative px-4 py-3 pr-12 hover:bg-ink-50">
+                  <div class="flex items-baseline justify-between gap-3">
+                    <p class="flex min-w-0 items-center gap-1.5 text-sm font-semibold text-ink-900">
+                      @if (r.replied) {
+                        <span appTooltip="Replied" tabindex="0" class="focus-ring inline-flex shrink-0 rounded text-brand-600">
+                          <lucide-icon [img]="i.ReplyIcon" class="h-3.5 w-3.5" aria-hidden="true" />
+                          <span class="sr-only">Replied</span>
+                        </span>
+                      }
+                      <span class="truncate">{{ r.fromName }}</span>
+                    </p>
+                    <span class="shrink-0 text-xs tabular-nums text-ink-500">{{ r.receivedOn }}</span>
+                  </div>
+                  <a [routerLink]="['/email', r.id]" class="link mt-0.5 block truncate text-[13px]">{{ r.subject }}</a>
+                  <p class="truncate text-xs text-ink-500">{{ r.fromEmail }}@if (r.status) {<span> · {{ r.status }}</span>}</p>
+                  <button appIconButton="absolute right-2 top-1/2 -translate-y-1/2" [label]="'Move “' + r.subject + '” to trash'" tip="Move to trash" variant="danger" size="sm" [icon]="i.Trash2Icon" (click)="pendingTrash.set(r)"></button>
+                </li>
+              }
+            </ul>
           } @else {
-            <span class="sr-only">Not replied</span>
+            <p class="px-4 py-8 text-center text-[13px] text-ink-500">The inbox is empty.</p>
           }
-        </ng-template>
-        <ng-template appCell="from" let-r><ng-container *ngTemplateOutlet="sender; context: { $implicit: r.fromName + ' (' + r.fromEmail + ')' }" /></ng-template>
-        <ng-template appCell="subject" let-r><a [routerLink]="['/email', r.id]" class="link">{{ r.subject }}</a></ng-template>
-        <ng-template appCell="status" let-r>
-          @if (r.status) {
-            {{ r.status }}
-          } @else {
-            <span class="text-ink-400" aria-label="No status">—</span>
-          }
-        </ng-template>
-        <ng-template appCell="trash" let-r>
-          <button appIconButton [label]="'Move “' + r.subject + '” to trash'" tip="Move to trash" variant="danger" size="sm" [icon]="i.Trash2Icon" (click)="pendingTrash.set(r)"></button>
-        </ng-template>
-      </app-data-table>
-    </app-panel>
-  </div>
+        </section>
 
-  <div class="grid items-start gap-5 lg:grid-cols-2">
-    <app-panel heading="Secondary Review" [count]="secondaryReviewItems.length" bodyClass="p-0">
-      <app-data-table id="secondary-review" label="Secondary Review" [columns]="secondaryColumns" [rows]="secondaryReviewItems" [rowId]="secondaryId" [searchText]="secondaryText">
-        <ng-template appCell="rush" let-r><app-flag-indicator kind="rush" [active]="r.rush" /></ng-template>
-        <ng-template appCell="rework" let-r><app-flag-indicator kind="rework" [active]="r.rework" /></ng-template>
-      </app-data-table>
-    </app-panel>
-    <app-panel heading="Return Email Receipt" [count]="returnEmailReceipts.length" bodyClass="p-0">
-      <app-data-table id="return-email-receipt" label="Return Email Receipt" [columns]="returnColumns" [rows]="returnEmailReceipts" [defaultPageSize]="5" [rowId]="returnId" [searchText]="returnText" />
-    </app-panel>
+        <section aria-labelledby="rail-flagged" class="overflow-hidden rounded-xl border border-ink-200 bg-white shadow-raised">
+          <header class="border-b border-ink-100 px-4 py-3">
+            <h2 id="rail-flagged" class="text-[15px] font-semibold text-ink-900">Rush &amp; rework</h2>
+            <p class="text-xs text-ink-500">Cases flagged for priority handling</p>
+          </header>
+          @if (flaggedCases().length) {
+            <ul class="divide-y divide-ink-100">
+              @for (c of flaggedCases(); track c.id) {
+                <li class="flex items-center gap-3 px-4 py-3">
+                  <span class="h-9 w-[3px] shrink-0 rounded-full" [class]="c.rush ? 'bg-danger-600' : 'bg-warning-500'" aria-hidden="true"></span>
+                  <div class="min-w-0 flex-1">
+                    <a [routerLink]="['/case', c.caseNumber]" class="link block truncate text-sm font-semibold">{{ c.claimant }}</a>
+                    <p class="truncate font-mono text-xs text-ink-500">{{ c.caseNumber }}</p>
+                  </div>
+                  <div class="flex shrink-0 flex-col items-end gap-1">
+                    <app-status-badge [status]="c.status" />
+                    <span class="text-xs font-semibold" [class]="c.rush ? 'text-danger-600' : 'text-warning-700'">{{ c.rush && c.rework ? 'Rush · Rework' : c.rush ? 'Rush' : 'Rework' }}</span>
+                  </div>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="px-4 py-6 text-center text-[13px] text-ink-500">No rush or rework cases.</p>
+          }
+        </section>
+      </div>
+    </div>
   </div>
-</div>
+} @else {
+  <div class="mx-auto w-full max-w-[1600px] space-y-6 p-4 lg:p-6">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <p class="text-xs font-medium uppercase tracking-wider text-ink-400">{{ today }}</p>
+        <h1 class="mt-1 text-2xl font-semibold tracking-tight text-ink-900">{{ greeting }}, Lauren</h1>
+        <p class="mt-0.5 text-sm text-ink-500">Here’s where your rated-age requests stand, from first email to broker confirmation.</p>
+      </div>
+      <button appButton size="sm" [leadingIcon]="i.ChartLineIcon" routerLink="/reports">View reports</button>
+    </div>
+
+    <section aria-labelledby="pipeline-heading">
+      <h2 id="pipeline-heading" class="sr-only">Case pipeline</h2>
+      <ol class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        @for (card of pipeline(); track card.eyebrow) {
+          <li>
+            <app-stat-card
+              [eyebrow]="card.eyebrow"
+              [label]="card.label"
+              [value]="card.value"
+              [icon]="card.icon"
+              [tone]="card.tone"
+              [hint]="card.hint"
+              [action]="card.action"
+              [active]="!!card.active"
+              [badge]="card.badge"
+              interactive
+              (activate)="card.run()" />
+          </li>
+        }
+      </ol>
+      @if (count('flagged') > 0) {
+        <button type="button" (click)="showQueue('flagged')" class="focus-ring mt-3 inline-flex items-center gap-2 rounded-md bg-warning-50 px-3 py-2 text-[13px] text-warning-700 ring-1 ring-inset ring-warning-100 hover:bg-warning-100">
+          <lucide-icon [img]="i.FlagIcon" class="h-4 w-4" aria-hidden="true" />
+          <span><span class="font-semibold">{{ count('flagged') }} cases flagged for rush or rework</span> — review these first.</span>
+        </button>
+      }
+    </section>
+
+    <div #queueEl class="scroll-mt-28">
+      <app-panel heading="My Underwriter Work Queue" [count]="filteredQueue().length" bodyClass="p-0">
+        <div panelActions role="group" aria-label="Filter work queue" class="flex flex-wrap items-center gap-1">
+          @for (f of filters; track f.id) {
+            <button type="button" [attr.aria-pressed]="filter() === f.id" (click)="filter.set(f.id)" [class]="chipClass(filter() === f.id)">
+              {{ f.label }}
+              <span class="tabular-nums" [class]="filter() === f.id ? 'text-white/80' : 'text-ink-500'">{{ count(f.id) }}</span>
+            </button>
+          }
+          @if (filter() !== 'all') {
+            <button appIconButton label="Clear filter" size="sm" [icon]="i.XIcon" (click)="filter.set('all')"></button>
+          }
+        </div>
+        <app-data-table
+          id="work-queue"
+          label="My Underwriter Work Queue"
+          [columns]="queueColumns"
+          [rows]="filteredQueue()"
+          [rowId]="queueId"
+          [searchText]="queueText"
+          [rowClass]="queueRowClass"
+          emptyMessage="No cases match this filter.">
+          <ng-template appCell="rush" let-r><app-flag-indicator kind="rush" [active]="r.rush" /></ng-template>
+          <ng-template appCell="rework" let-r><app-flag-indicator kind="rework" [active]="r.rework" /></ng-template>
+          <ng-template appCell="claimant" let-r><a [routerLink]="['/case', r.caseNumber]" class="link whitespace-nowrap">{{ r.claimant }}</a></ng-template>
+          <ng-template appCell="sender" let-r><ng-container *ngTemplateOutlet="sender; context: { $implicit: r.sender }" /></ng-template>
+          <ng-template appCell="status" let-r><app-status-badge [status]="r.status" /></ng-template>
+        </app-data-table>
+      </app-panel>
+    </div>
+
+    <div #inboxEl class="scroll-mt-28">
+      <app-panel heading="SS Medicals Inbox" [icon]="i.MailIcon" [count]="ws.inbox().length" bodyClass="p-0">
+        <app-data-table id="ss-medicals-inbox" label="SS Medicals Inbox" [columns]="inboxColumns" [rows]="ws.inbox()" [rowId]="inboxId" [searchText]="inboxText">
+          <ng-template appCell="replied" let-r>
+            @if (r.replied) {
+              <span appTooltip="Replied" tabindex="0" class="focus-ring inline-flex rounded text-brand-600">
+                <lucide-icon [img]="i.ReplyIcon" class="h-4 w-4" aria-hidden="true" />
+                <span class="sr-only">Replied</span>
+              </span>
+            } @else {
+              <span class="sr-only">Not replied</span>
+            }
+          </ng-template>
+          <ng-template appCell="from" let-r><ng-container *ngTemplateOutlet="sender; context: { $implicit: r.fromName + ' (' + r.fromEmail + ')' }" /></ng-template>
+          <ng-template appCell="subject" let-r><a [routerLink]="['/email', r.id]" class="link">{{ r.subject }}</a></ng-template>
+          <ng-template appCell="status" let-r>
+            @if (r.status) {
+              {{ r.status }}
+            } @else {
+              <span class="text-ink-400" aria-label="No status">—</span>
+            }
+          </ng-template>
+          <ng-template appCell="trash" let-r>
+            <button appIconButton [label]="'Move “' + r.subject + '” to trash'" tip="Move to trash" variant="danger" size="sm" [icon]="i.Trash2Icon" (click)="pendingTrash.set(r)"></button>
+          </ng-template>
+        </app-data-table>
+      </app-panel>
+    </div>
+
+    <div class="grid items-start gap-5 lg:grid-cols-2">
+      <app-panel heading="Secondary Review" [count]="secondaryReviewItems.length" bodyClass="p-0">
+        <app-data-table id="secondary-review" label="Secondary Review" [columns]="secondaryColumns" [rows]="secondaryReviewItems" [rowId]="secondaryId" [searchText]="secondaryText">
+          <ng-template appCell="rush" let-r><app-flag-indicator kind="rush" [active]="r.rush" /></ng-template>
+          <ng-template appCell="rework" let-r><app-flag-indicator kind="rework" [active]="r.rework" /></ng-template>
+        </app-data-table>
+      </app-panel>
+      <app-panel heading="Return Email Receipt" [count]="returnEmailReceipts.length" bodyClass="p-0">
+        <app-data-table id="return-email-receipt" label="Return Email Receipt" [columns]="returnColumns" [rows]="returnEmailReceipts" [defaultPageSize]="5" [rowId]="returnId" [searchText]="returnText" />
+      </app-panel>
+    </div>
+  </div>
+}
 
 <app-modal [open]="!!pendingTrash()" heading="Move this email to trash?" [description]="pendingTrash() ? '“' + pendingTrash()!.subject + '” from ' + pendingTrash()!.fromName + ' will be removed from the SS Medicals Inbox.' : ''" (closed)="pendingTrash.set(null)">
   <div modalFooter class="contents">

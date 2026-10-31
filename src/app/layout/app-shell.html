@@ -1,81 +1,196 @@
-<div class="flex min-h-screen w-full flex-col bg-canvas">
+<div class="flex min-h-screen w-full bg-canvas" [class.flex-col]="!theme.isEvergreen()">
   <a href="#main" class="sr-only z-50 rounded-md bg-white px-3 py-2 text-sm font-medium text-brand-700 focus:not-sr-only focus:fixed focus:left-3 focus:top-3">
     Skip to content
   </a>
 
-  <header class="sticky top-0 z-30">
-    <div class="flex h-12 items-center gap-2 bg-brand-600 px-3 text-white lg:px-4">
-      <a
-        routerLink="/"
-        aria-label="FlowRocket — Home Workspace"
-        class="focus-ring group -ml-1 flex shrink-0 items-center gap-2.5 rounded-lg py-1 pl-1 pr-2 focus-visible:ring-white focus-visible:ring-offset-brand-600">
-        <span class="grid h-8 w-8 place-items-center rounded-lg bg-white text-brand-600 shadow-sm ring-1 ring-black/5 transition-transform duration-200 group-hover:-translate-y-0.5" aria-hidden="true">
-          <lucide-icon [img]="icons.RocketIcon" class="h-[18px] w-[18px] -rotate-12" />
-        </span>
-        <span class="text-[19px] font-bold leading-none tracking-tight text-white" aria-hidden="true">Flow<span class="text-brand-100">Rocket</span></span>
-      </a>
-      <span class="mx-2 hidden h-6 w-px bg-white/25 sm:block" aria-hidden="true"></span>
-      <nav aria-label="Primary" class="flex items-center gap-0.5">
-        <button type="button" (click)="notInPrototype('Address Book')" [class]="cn(navText, 'bg-white/10')">
-          Address Book
-          <lucide-icon [img]="icons.ChevronDownIcon" class="h-4 w-4" aria-hidden="true" />
-        </button>
-        <button type="button" (click)="notInPrototype('Documents')" [class]="cn(navText, 'hidden md:inline-flex')">Documents</button>
-        <button type="button" (click)="notInPrototype('Calendar')" [class]="cn(navText, 'hidden md:inline-flex')">Calendar</button>
-        <button type="button" (click)="notInPrototype('Tools')" [class]="cn(navText, 'hidden md:inline-flex')">Tools</button>
-        <button appIconButton="hidden md:inline-flex" label="Create new" variant="onBrand" [icon]="icons.CirclePlusIcon" (click)="notInPrototype('Create new')"></button>
+  @if (theme.isEvergreen()) {
+    <aside
+      aria-label="Sidebar"
+      class="sticky top-0 z-40 flex h-screen shrink-0 flex-col bg-brand-900 text-white blue:bg-brand-600 transition-[width] duration-200 ease-out"
+      [class]="collapsed() ? 'w-[68px]' : 'w-64'">
+      <div class="relative flex h-14 shrink-0 items-center border-b border-white/10" [class.pr-3]="!collapsed() && !narrow()">
+        <a
+          routerLink="/"
+          aria-label="FlowRocket — Dashboard"
+          class="focus-ring flex h-full min-w-0 flex-1 items-center gap-3 px-4 focus-visible:ring-inset focus-visible:ring-white"
+          [class.justify-center]="collapsed()"
+          [class.px-0]="collapsed()">
+          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-600 text-white blue:bg-brand-800" aria-hidden="true">
+            <lucide-icon [img]="icons.RocketIcon" class="h-[18px] w-[18px] -rotate-12" />
+          </span>
+          @if (!collapsed()) {
+            <span class="min-w-0 leading-tight">
+              <span class="block text-[15px] font-semibold tracking-tight">FlowRocket</span>
+              <span class="block text-xs text-white/60 blue:text-white/85">Medical Underwriting</span>
+            </span>
+          }
+        </a>
+        @if (!narrow()) {
+          <button
+            type="button"
+            [attr.aria-expanded]="!collapsed()"
+            [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+            [attr.title]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+            (click)="toggleSidebar()"
+            class="focus-ring grid shrink-0 place-items-center transition-colors duration-150 focus-visible:ring-white focus-visible:ring-offset-brand-900 blue:focus-visible:ring-offset-brand-600"
+            [class]="collapsed() ? 'absolute -right-3.5 top-1/2 z-10 h-7 w-7 -translate-y-1/2 rounded-full border border-ink-200 bg-white text-brand-900 shadow-lifted hover:bg-brand-50' : 'h-8 w-8 rounded-md bg-white/10 text-white hover:bg-white/20'">
+            <lucide-icon [img]="collapsed() ? icons.PanelLeftOpenIcon : icons.PanelLeftCloseIcon" class="h-4 w-4" aria-hidden="true" />
+          </button>
+        }
+      </div>
+
+      <nav aria-label="Primary" class="flex-1 space-y-1 overflow-y-auto px-3 pt-4">
+        @for (l of sideLinks(); track l.label) {
+          <a [routerLink]="l.route" [class]="sideItem(l.active)" [attr.aria-current]="l.active ? 'page' : null" [attr.aria-label]="collapsed() ? l.label : null" [attr.title]="collapsed() ? l.label : null">
+            @if (l.active) {
+              <span class="absolute inset-y-2 left-0 w-[3px] rounded-r bg-warning-500 blue:bg-brand-900" aria-hidden="true"></span>
+            }
+            <lucide-icon [img]="l.icon" class="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
+            @if (!collapsed()) {
+              <span class="flex-1 truncate">{{ l.label }}</span>
+              @if (l.badge) {
+                <span class="grid h-5 min-w-5 place-items-center rounded bg-warning-500 px-1 text-[11px] font-bold leading-none text-brand-900" [attr.aria-label]="l.badge + ' unreplied'">{{ l.badge }}</span>
+              }
+            } @else if (l.badge) {
+              <span class="absolute right-2 top-1.5 h-2 w-2 rounded-full bg-warning-500" aria-hidden="true"></span>
+            }
+          </a>
+        }
+
+        @if (!collapsed()) {
+          <p class="px-3 pb-1 pt-5 text-[11px] font-semibold uppercase tracking-wider text-white/55 blue:text-white/85">Workspace</p>
+        } @else {
+          <hr class="mx-2 my-3 border-white/10" />
+        }
+        @for (t of toolLinks; track t.label) {
+          <button type="button" [class]="sideItem(false)" [attr.aria-label]="collapsed() ? t.label : null" [attr.title]="collapsed() ? t.label : null" (click)="notInPrototype(t.label)">
+            <lucide-icon [img]="t.icon" class="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
+            @if (!collapsed()) {
+              <span class="flex-1 truncate text-left">{{ t.label }}</span>
+            }
+          </button>
+        }
       </nav>
 
-      <form role="search" class="relative mx-auto hidden w-full max-w-md flex-1 md:block" (submit)="$event.preventDefault()">
-        <label for="global-search" class="sr-only">Search FlowRocket</label>
-        <lucide-icon [img]="icons.SearchIcon" class="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" aria-hidden="true" />
-        <input
-          id="global-search"
-          type="search"
-          placeholder="Search..."
-          class="h-8 w-full rounded-md border border-transparent bg-white pl-8 pr-8 text-sm text-ink-900 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-600" />
-        <lucide-icon [img]="icons.ChevronDownIcon" class="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-500" aria-hidden="true" />
-      </form>
-
-      <div class="ml-auto flex items-center gap-0.5 md:ml-0">
-        <button appIconButton label="Reports" variant="onBrand" [icon]="icons.ChartLineIcon" routerLink="/reports"></button>
-        <button appIconButton label="Display" variant="onBrand" [icon]="icons.MonitorIcon" (click)="notInPrototype('Display')"></button>
-        <span class="ml-1 hidden items-center gap-1.5 px-1.5 text-sm font-medium sm:inline-flex">
-          <lucide-icon [img]="icons.UserIcon" class="h-4 w-4" aria-hidden="true" />
-          Lauren McKenna
-        </span>
-        <button appIconButton label="Sign out" variant="onBrand" [icon]="icons.LogOutIcon" (click)="notInPrototype('Sign out')"></button>
+      <div class="space-y-1 border-t border-white/10 px-3 py-3">
+        <a routerLink="/design-system" [class]="sideItem(onDesignSystem())" [attr.aria-current]="onDesignSystem() ? 'page' : null" [attr.aria-label]="collapsed() ? 'Design System' : null" [attr.title]="collapsed() ? 'Design System' : null">
+          @if (onDesignSystem()) {
+            <span class="absolute inset-y-2 left-0 w-[3px] rounded-r bg-warning-500 blue:bg-brand-900" aria-hidden="true"></span>
+          }
+          <lucide-icon [img]="icons.PaletteIcon" class="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
+          @if (!collapsed()) {
+            <span class="flex-1 truncate">Design System</span>
+          }
+        </a>
       </div>
-    </div>
-
-    <div class="flex h-10 items-center justify-between gap-2 bg-brand-700 px-3 text-white lg:px-4">
-      <nav aria-label="Workspace" class="flex items-center gap-0.5">
-        <a routerLink="/" [class]="subNav(onHome())" [attr.aria-current]="onHome() ? 'page' : null">
-          <lucide-icon [img]="icons.HouseIcon" class="h-4 w-4" aria-hidden="true" />
-          Home Workspace
-        </a>
-        <span class="h-4 w-px bg-white/30" aria-hidden="true"></span>
-        <a routerLink="/reports" [class]="subNav(onReports())" [attr.aria-current]="onReports() ? 'page' : null">
-          <lucide-icon [img]="icons.ChartLineIcon" class="h-4 w-4" aria-hidden="true" />
-          Reports
-        </a>
-      </nav>
-      <div class="flex items-center gap-0.5">
-        <a routerLink="/design-system" [class]="subNav(onDesignSystem())" [attr.aria-current]="onDesignSystem() ? 'page' : null">
-          <lucide-icon [img]="icons.PaletteIcon" class="h-4 w-4" aria-hidden="true" />
-          <span class="hidden sm:inline">Design System</span>
-        </a>
-        <span class="mx-1 h-4 w-px bg-white/30" aria-hidden="true"></span>
-        <button appIconButton="focus-visible:ring-offset-brand-700" label="Lists" variant="onBrand" size="sm" [icon]="icons.ListIcon" (click)="notInPrototype('Lists')"></button>
-        <button appIconButton="focus-visible:ring-offset-brand-700" label="Chat" variant="onBrand" size="sm" [icon]="icons.MessageCircleIcon" (click)="notInPrototype('Chat')"></button>
-        <button appIconButton="focus-visible:ring-offset-brand-700" label="Notifications, 0 unread" variant="onBrand" size="sm" [icon]="icons.BellIcon" (click)="notify()">
-          <span class="absolute -right-0.5 -top-0.5 grid h-4 min-w-[16px] place-items-center rounded-full bg-warning-500 px-1 text-[10px] font-bold leading-none text-ink-900" aria-hidden="true">0</span>
-        </button>
+      <div class="flex items-center gap-3 border-t border-white/10 px-4 py-3" [class.justify-center]="collapsed()" [class.px-0]="collapsed()">
+        <app-avatar initials="LM" size="md" tone="neutral" class="!bg-white/15 !text-white" />
+        @if (!collapsed()) {
+          <div class="min-w-0 flex-1 leading-tight">
+            <p class="truncate text-sm font-semibold">Lauren McKenna</p>
+            <p class="truncate text-xs text-white/60 blue:text-white/85">Underwriter</p>
+          </div>
+          <button appIconButton="text-white/75 hover:bg-white/10 hover:text-white focus-visible:ring-white focus-visible:ring-offset-brand-900 blue:focus-visible:ring-offset-brand-600" label="Sign out" [icon]="icons.LogOutIcon" (click)="notInPrototype('Sign out')"></button>
+        }
       </div>
-    </div>
-  </header>
+    </aside>
+  }
 
-  <main id="main" class="flex-1">
-    <router-outlet />
-  </main>
+  <div [class]="theme.isEvergreen() ? 'flex min-w-0 flex-1 flex-col' : 'contents'">
+    @if (theme.isEvergreen()) {
+      <header class="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-ink-200 bg-white px-4 lg:px-6">
+        <form role="search" class="relative w-full max-w-xl flex-1" (submit)="$event.preventDefault()">
+          <label for="global-search" class="sr-only">Search FlowRocket</label>
+          <lucide-icon [img]="icons.SearchIcon" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-500" aria-hidden="true" />
+          <input
+            id="global-search"
+            type="search"
+            placeholder="Search claimant, case #…"
+            class="h-9 w-full rounded-md border border-ink-200 bg-ink-50 pl-9 pr-3 text-sm text-ink-900 placeholder:text-ink-500 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-600/30" />
+        </form>
+        <div class="ml-auto flex items-center gap-1.5">
+          <app-palette-switcher />
+          <app-theme-switcher />
+          <button appIconButton label="Notifications, 0 unread" [icon]="icons.BellIcon" (click)="notify()"></button>
+          <button appIconButton label="Help" [icon]="icons.CircleQuestionMarkIcon" (click)="notInPrototype('Help')"></button>
+        </div>
+      </header>
+    } @else {
+    <header class="sticky top-0 z-30">
+      <div class="flex h-12 items-center gap-2 bg-brand-600 px-3 text-white lg:px-4">
+        <a
+          routerLink="/"
+          aria-label="FlowRocket — Home Workspace"
+          class="focus-ring group -ml-1 flex shrink-0 items-center gap-2.5 rounded-lg py-1 pl-1 pr-2 focus-visible:ring-white focus-visible:ring-offset-brand-600">
+          <span class="grid h-8 w-8 place-items-center rounded-lg bg-white text-brand-600 shadow-sm ring-1 ring-black/5 transition-transform duration-200 group-hover:-translate-y-0.5" aria-hidden="true">
+            <lucide-icon [img]="icons.RocketIcon" class="h-[18px] w-[18px] -rotate-12" />
+          </span>
+          <span class="text-[19px] font-bold leading-none tracking-tight text-white" aria-hidden="true">Flow<span class="text-brand-100">Rocket</span></span>
+        </a>
+        <span class="mx-2 hidden h-6 w-px bg-white/25 sm:block" aria-hidden="true"></span>
+        <nav aria-label="Primary" class="flex items-center gap-0.5">
+          <button type="button" (click)="notInPrototype('Address Book')" [class]="cn(navText, 'bg-white/10')">
+            Address Book
+            <lucide-icon [img]="icons.ChevronDownIcon" class="h-4 w-4" aria-hidden="true" />
+          </button>
+          <button type="button" (click)="notInPrototype('Documents')" [class]="cn(navText, 'hidden md:inline-flex')">Documents</button>
+          <button type="button" (click)="notInPrototype('Calendar')" [class]="cn(navText, 'hidden md:inline-flex')">Calendar</button>
+          <button type="button" (click)="notInPrototype('Tools')" [class]="cn(navText, 'hidden md:inline-flex')">Tools</button>
+          <button appIconButton="hidden md:inline-flex" label="Create new" variant="onBrand" [icon]="icons.CirclePlusIcon" (click)="notInPrototype('Create new')"></button>
+        </nav>
+
+        <form role="search" class="relative mx-auto hidden w-full max-w-md flex-1 md:block" (submit)="$event.preventDefault()">
+          <label for="global-search" class="sr-only">Search FlowRocket</label>
+          <lucide-icon [img]="icons.SearchIcon" class="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" aria-hidden="true" />
+          <input
+            id="global-search"
+            type="search"
+            placeholder="Search..."
+            class="h-8 w-full rounded-md border border-transparent bg-white pl-8 pr-8 text-sm text-ink-900 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-600" />
+          <lucide-icon [img]="icons.ChevronDownIcon" class="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-500" aria-hidden="true" />
+        </form>
+
+        <div class="ml-auto flex items-center gap-0.5 md:ml-0">
+          <button appIconButton label="Reports" variant="onBrand" [icon]="icons.ChartLineIcon" routerLink="/reports"></button>
+          <app-theme-switcher tone="onBrand" class="mx-1" />
+          <span class="ml-1 hidden items-center gap-1.5 px-1.5 text-sm font-medium sm:inline-flex">
+            <lucide-icon [img]="icons.UserIcon" class="h-4 w-4" aria-hidden="true" />
+            Lauren McKenna
+          </span>
+          <button appIconButton label="Sign out" variant="onBrand" [icon]="icons.LogOutIcon" (click)="notInPrototype('Sign out')"></button>
+        </div>
+      </div>
+
+      <div class="flex h-10 items-center justify-between gap-2 bg-brand-700 px-3 text-white lg:px-4">
+        <nav aria-label="Workspace" class="flex items-center gap-0.5">
+          <a routerLink="/" [class]="subNav(onHome())" [attr.aria-current]="onHome() ? 'page' : null">
+            <lucide-icon [img]="icons.HouseIcon" class="h-4 w-4" aria-hidden="true" />
+            Home Workspace
+          </a>
+          <span class="h-4 w-px bg-white/30" aria-hidden="true"></span>
+          <a routerLink="/reports" [class]="subNav(onReports())" [attr.aria-current]="onReports() ? 'page' : null">
+            <lucide-icon [img]="icons.ChartLineIcon" class="h-4 w-4" aria-hidden="true" />
+            Reports
+          </a>
+        </nav>
+        <div class="flex items-center gap-0.5">
+          <a routerLink="/design-system" [class]="subNav(onDesignSystem())" [attr.aria-current]="onDesignSystem() ? 'page' : null">
+            <lucide-icon [img]="icons.PaletteIcon" class="h-4 w-4" aria-hidden="true" />
+            <span class="hidden sm:inline">Design System</span>
+          </a>
+          <span class="mx-1 h-4 w-px bg-white/30" aria-hidden="true"></span>
+          <button appIconButton="focus-visible:ring-offset-brand-700" label="Lists" variant="onBrand" size="sm" [icon]="icons.ListIcon" (click)="notInPrototype('Lists')"></button>
+          <button appIconButton="focus-visible:ring-offset-brand-700" label="Chat" variant="onBrand" size="sm" [icon]="icons.MessageCircleIcon" (click)="notInPrototype('Chat')"></button>
+          <button appIconButton="focus-visible:ring-offset-brand-700" label="Notifications, 0 unread" variant="onBrand" size="sm" [icon]="icons.BellIcon" (click)="notify()">
+            <span class="absolute -right-0.5 -top-0.5 grid h-4 min-w-[16px] place-items-center rounded-full bg-warning-500 px-1 text-[10px] font-bold leading-none text-ink-900" aria-hidden="true">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+    }
+
+    <main id="main" class="min-w-0 flex-1">
+      <router-outlet />
+    </main>
+  </div>
 </div>

@@ -1,8 +1,176 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Theme tokens: Classic is the original palette; Evergreen swaps colour, radius, shadow and type. */
+:root {
+  color-scheme: light;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --radius-sm: 0.125rem;
+  --radius: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+  --shadow-overlay: 0 16px 40px -12px rgba(16, 24, 40, 0.28);
+  --shadow-raised: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 12px -2px rgba(16, 24, 40, 0.08);
+  --shadow-lifted: 0 2px 4px rgba(16, 24, 40, 0.04), 0 12px 24px -6px rgba(16, 24, 40, 0.14);
+  --canvas: 243 246 249;
+  --brand-50: 239 246 252;
+  --brand-100: 220 235 248;
+  --brand-200: 185 215 240;
+  --brand-300: 139 189 229;
+  --brand-400: 90 159 216;
+  --brand-500: 47 130 199;
+  --brand-600: 35 105 168;
+  --brand-700: 29 86 137;
+  --brand-800: 26 71 111;
+  --brand-900: 22 59 92;
+  --ink-50: 245 247 250;
+  --ink-100: 236 240 244;
+  --ink-200: 217 224 231;
+  --ink-300: 181 193 204;
+  --ink-400: 132 148 164;
+  --ink-500: 90 107 124;
+  --ink-700: 58 74 90;
+  --ink-800: 38 51 63;
+  --ink-900: 27 39 51;
+  --success-50: 236 248 241;
+  --success-100: 211 239 223;
+  --success-500: 43 161 96;
+  --success-600: 30 142 79;
+  --success-700: 23 112 62;
+  --warning-50: 255 247 232;
+  --warning-100: 253 235 200;
+  --warning-500: 232 155 12;
+  --warning-600: 201 130 0;
+  --warning-700: 143 90 0;
+  --danger-50: 253 239 239;
+  --danger-100: 250 215 215;
+  --danger-200: 243 180 180;
+  --danger-500: 217 59 59;
+  --danger-600: 196 43 43;
+  --danger-700: 161 31 31;
+  --info-50: 239 246 252;
+  --info-100: 220 235 248;
+  --info-200: 185 215 240;
+  --info-500: 47 130 199;
+  --info-700: 29 86 137;
+}
+
+/* Evergreen: deep-teal sidebar shell, flatter surfaces, IBM Plex type. */
+:root[data-theme='evergreen'] {
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --radius-sm: 3px;
+  --radius: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-2xl: 14px;
+  --shadow-xs: 0 1px 0 rgba(11, 42, 44, 0.04);
+  --shadow-card: 0 1px 2px rgba(11, 42, 44, 0.05);
+  --shadow-overlay: 0 20px 48px -16px rgba(11, 42, 44, 0.38);
+  --shadow-raised: 0 1px 2px rgba(11, 42, 44, 0.05);
+  --shadow-lifted: 0 4px 14px -4px rgba(11, 42, 44, 0.16);
+  --canvas: 243 245 244;
+  --brand-50: 226 240 238;
+  --brand-100: 203 229 225;
+  --brand-200: 165 210 204;
+  --brand-300: 116 184 176;
+  --brand-400: 60 154 145;
+  --brand-500: 26 129 121;
+  --brand-600: 15 107 102;
+  --brand-700: 11 87 83;
+  --brand-800: 10 74 71;
+  --brand-900: 11 42 44;
+  --ink-50: 245 247 246;
+  --ink-100: 235 239 238;
+  --ink-200: 220 226 224;
+  --ink-300: 186 196 193;
+  --ink-400: 102 115 111;
+  --ink-500: 85 98 94;
+  --ink-700: 61 75 73;
+  --ink-800: 31 43 41;
+  --ink-900: 20 32 31;
+  --success-50: 228 242 233;
+  --success-100: 204 229 214;
+  --success-500: 60 148 98;
+  --success-600: 47 125 79;
+  --success-700: 31 96 56;
+  --warning-50: 251 241 222;
+  --warning-100: 245 224 181;
+  --warning-500: 212 145 42;
+  --warning-600: 153 101 21;
+  --warning-700: 126 83 16;
+  --danger-50: 251 233 234;
+  --danger-100: 244 210 212;
+  --danger-200: 233 170 174;
+  --danger-500: 203 74 82;
+  --danger-600: 180 50 58;
+  --danger-700: 143 37 44;
+  --info-50: 232 237 248;
+  --info-100: 211 221 241;
+  --info-200: 177 194 230;
+  --info-500: 59 91 165;
+  --info-700: 45 70 132;
+}
+
+/* Evergreen layout, "Corporate Blue" palette (primary #005C92, accent #03A1FF, canvas #EEEEEE).
+   Only colours and shadow tint change; layout, type and radii come from the block above. */
+:root[data-theme='evergreen'][data-palette='blue'] {
+  --shadow-xs: 0 1px 0 rgba(8, 38, 66, 0.05);
+  --shadow-card: 0 1px 2px rgba(8, 38, 66, 0.06);
+  --shadow-overlay: 0 20px 48px -16px rgba(8, 38, 66, 0.4);
+  --shadow-raised: 0 1px 2px rgba(8, 38, 66, 0.06);
+  --shadow-lifted: 0 4px 14px -4px rgba(8, 38, 66, 0.18);
+  --canvas: 238 238 238;
+  --brand-50: 232 242 250;
+  --brand-100: 207 228 243;
+  --brand-200: 164 202 232;
+  --brand-300: 110 166 208;
+  --brand-400: 50 135 190;
+  --brand-500: 16 129 197;
+  --brand-600: 0 92 146;
+  --brand-700: 0 74 120;
+  --brand-800: 0 58 96;
+  --brand-900: 8 38 66;
+  --ink-50: 245 246 248;
+  --ink-100: 233 236 239;
+  --ink-200: 222 226 230;
+  --ink-300: 186 192 198;
+  --ink-400: 90 98 106;
+  --ink-500: 73 80 87;
+  --ink-700: 52 58 64;
+  --ink-800: 41 46 51;
+  --ink-900: 33 37 41;
+  --success-50: 228 244 232;
+  --success-100: 204 232 212;
+  --success-500: 40 167 69;
+  --success-600: 30 126 52;
+  --success-700: 22 98 41;
+  --warning-50: 255 246 217;
+  --warning-100: 255 234 168;
+  --warning-500: 255 193 7;
+  --warning-600: 133 100 4;
+  --warning-700: 102 77 3;
+  --danger-50: 252 232 234;
+  --danger-100: 247 208 212;
+  --danger-200: 238 170 177;
+  --danger-500: 220 53 69;
+  --danger-600: 200 40 55;
+  --danger-700: 160 30 44;
+  --info-50: 232 242 250;
+  --info-100: 207 228 243;
+  --info-200: 164 202 232;
+  --info-500: 16 129 197;
+  --info-700: 0 74 120;
+}
 
 @layer base {
   html {

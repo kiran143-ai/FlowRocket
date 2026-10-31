@@ -19,7 +19,7 @@ const darkBtn = 'focus-visible:ring-white focus-visible:ring-offset-ink-900';
   imports: [NgTemplateOutlet, LucideAngularModule, IconButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pdf-viewer.html',
-  host: { class: 'flex h-[calc(100vh-88px)] flex-col' }
+  host: { class: 'flex h-[calc(100vh-88px)] flex-col eg:h-[calc(100vh-56px)]' }
 })
 export class PdfViewer {
   readonly fileName = input.required<string>();

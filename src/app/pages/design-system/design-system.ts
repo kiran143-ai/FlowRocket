@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   BellIcon,
@@ -22,7 +22,9 @@ import {
   XIcon
 } from 'lucide-angular';
 import { CaseToolbar } from '../../case/case-toolbar';
-import { a11yGuidelines, colorGroups, flaggedChanges, spacingScale, typeScale } from '../../core/data/designTokens';
+import { PaletteSwitcher, ThemeSwitcher } from '../../layout/theme-switcher';
+import { a11yGuidelines, evergreenBlueColorGroups, flaggedChanges, spacingScale, themeComparison, themeDocs, themeTokens, typeScale } from '../../core/data/designTokens';
+import { ThemeService } from '../../core/services/theme.service';
 import { workQueue } from '../../core/data/workQueue';
 import { QueueItem } from '../../core/types/workspace';
 import { Cell, Column, DataTable } from '../../shared/data-table';
@@ -52,6 +54,8 @@ import {
     NgTemplateOutlet,
     LucideAngularModule,
     CaseToolbar,
+    ThemeSwitcher,
+    PaletteSwitcher,
     DataTable,
     Cell,
     Alert,
@@ -75,9 +79,15 @@ import {
 })
 export class DesignSystem {
   private readonly router = inject(Router);
+  protected readonly theme = inject(ThemeService);
+  /** Everything on this page that describes the palette, type or layout follows the active version. */
+  protected readonly doc = computed(() => {
+    const d = themeDocs[this.theme.theme()];
+    return this.theme.isEvergreen() && this.theme.palette() === 'blue' ? { ...d, name: 'Evergreen · Corporate Blue', colorGroups: evergreenBlueColorGroups, navigation: 'A deep-blue sidebar (#005C92) with a sky-blue (#03A1FF) active item replaces the two-tier header. Case screens gain a workspace header with the claimant identity, key figures and tabbed case navigation.' } : d;
+  });
   private readonly content = viewChild.required<ElementRef<HTMLElement>>('content');
   /** Section currently in view, highlighted in the sidebar. */
-  protected readonly active = signal('color');
+  protected readonly active = signal('themes');
 
   constructor() {
     const destroyRef = inject(DestroyRef);
@@ -116,13 +126,14 @@ export class DesignSystem {
   }
 
   protected readonly toc: { group: string; items: [string, string][] }[] = [
-    { group: 'Foundations', items: [['color', 'Color'], ['typography', 'Typography'], ['spacing', 'Spacing & elevation'], ['layout', 'Layout & grid']] },
+    { group: 'Foundations', items: [['themes', 'Themes & layout'], ['color', 'Color'], ['typography', 'Typography'], ['spacing', 'Spacing & elevation'], ['layout', 'Layout & grid']] },
     { group: 'Controls', items: [['buttons', 'Buttons'], ['inputs', 'Inputs'], ['dropdowns', 'Dropdowns & choices']] },
     { group: 'Display', items: [['tables', 'Data tables'], ['badges', 'Badges & status'], ['alerts', 'Alerts & feedback'], ['cards', 'Cards, panels & tabs'], ['modals', 'Modals'], ['navigation', 'Navigation']] },
     { group: 'Guidance', items: [['accessibility', 'Accessibility'], ['review', 'Flagged for review']] }
   ];
 
-  protected readonly colorGroups = colorGroups;
+  protected readonly themeComparison = themeComparison;
+  protected readonly themeTokens = themeTokens;
   protected readonly typeScale = typeScale;
   protected readonly spacingScale = spacingScale;
   protected readonly a11yGuidelines = a11yGuidelines;
@@ -130,12 +141,6 @@ export class DesignSystem {
   protected readonly workQueue = workQueue;
   protected readonly choiceInput = choiceInput;
 
-  protected readonly radii = [
-    ['rounded', '4px', 'Chips, toolbar buttons'],
-    ['rounded-md', '6px', 'Inputs, buttons'],
-    ['rounded-lg', '8px', 'Panels, cards'],
-    ['rounded-xl', '12px', 'Dialogs']
-  ];
 
   protected readonly variants: { variant: ButtonVariant; name: string; usage: string; hover: string; active: string }[] = [
     { variant: 'primary', name: 'Primary', usage: 'One per view: Save & Close, Search, Send', hover: '!bg-brand-700', active: '!bg-brand-800' },
@@ -167,6 +172,7 @@ export class DesignSystem {
     BellIcon,
     ChartLineIcon,
     ChevronDownIcon,
+    FileTextIcon,
     HourglassIcon,
     HouseIcon,
     LogOutIcon,

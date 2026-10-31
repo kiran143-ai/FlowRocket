@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
-import { CheckIcon, ClipboardPenIcon, DownloadIcon, EyeIcon, LucideAngularModule, SendIcon } from 'lucide-angular';
+import { CheckIcon, DownloadIcon, LucideAngularModule } from 'lucide-angular';
 import { RaSheetService } from '../core/services/ra-sheet.service';
 import { CaseRecord } from '../core/types/case';
 import { cn } from '../core/utils/cn';
 import { CASE_STAGES, caseStage } from '../core/utils/raSheet';
 import { Avatar, Badge, Button } from '../shared/ui';
+import { caseNextStep } from './next-step';
 
 /** Activity Sheet header: who, key figures, progress through the workflow, and the next step. */
 @Component({
@@ -26,19 +27,7 @@ export class CaseOverview {
     return [f.rush && 'Rush', f.rework && 'Rework', f.mediation && 'Mediation', f.msa && 'MSA', f.wc && 'WC'].filter(Boolean) as string[];
   });
 
-  protected readonly next = computed(() => {
-    const c = this.caseRecord();
-    const base = `/case/${c.caseNumber}`;
-    switch (caseStage(c)) {
-      case 'received':
-        return { title: 'Next: rate this case', body: 'Use the life expectancy table to calculate the rated age.', cta: 'Rate case', icon: ClipboardPenIcon, to: `${base}/rating/edit`, done: false };
-      case 'communicated':
-        return { title: 'All done', body: `RA confirmation was sent to ${c.broker.firm}.`, cta: 'View RA sheet', icon: EyeIcon, to: `${base}/ra-sheet`, done: true };
-      default:
-        return { title: 'Next: send the RA to the broker', body: `Email the confirmation sheet to ${c.broker.contact}.`, cta: 'Send to broker', icon: SendIcon, to: `${base}/message`, done: false };
-    }
-  });
-
+  protected readonly next = computed(() => caseNextStep(this.caseRecord()));
   protected readonly CheckIcon = CheckIcon;
   protected readonly DownloadIcon = DownloadIcon;
 

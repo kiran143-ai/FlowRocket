@@ -5,6 +5,8 @@ export interface TabItem {
   id: string;
   label: string;
   icon?: LucideIconData;
+  /** Optional count shown as a pill beside the label. */
+  count?: number;
 }
 
 /** Underline tabs with arrow/Home/End keyboard support. Panels use id `${idPrefix}-panel-${id}`. */
@@ -31,6 +33,9 @@ export interface TabItem {
           <lucide-icon [img]="item.icon" class="h-4 w-4" aria-hidden="true" />
         }
         {{ item.label }}
+        @if (item.count !== undefined) {
+          <span class="rounded-full bg-ink-100 px-1.5 py-px text-[11px] font-semibold tabular-nums text-ink-700" [attr.aria-label]="item.count + ' items'">{{ item.count }}</span>
+        }
       </button>
     }
   `

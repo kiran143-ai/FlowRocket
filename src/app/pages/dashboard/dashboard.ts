@@ -2,7 +2,9 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import {
+  ArrowRightIcon,
   ChartLineIcon,
+  ChevronRightIcon,
   ClipboardCheckIcon,
   FlagIcon,
   InboxIcon,
@@ -19,11 +21,12 @@ import { toast } from 'ngx-sonner';
 import { returnEmailReceipts } from '../../core/data/returnEmailReceipts';
 import { secondaryReviewItems } from '../../core/data/secondaryReview';
 import { CaseService } from '../../core/services/case.service';
+import { ThemeService } from '../../core/services/theme.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { CaseStatus, InboxItem, QueueItem, ReturnEmailItem, SecondaryReviewItem } from '../../core/types/workspace';
 import { cn } from '../../core/utils/cn';
 import { Cell, Column, DataTable } from '../../shared/data-table';
-import { Button, FlagIndicator, IconButton, Modal, Panel, StatCard, StatTone, StatusBadge, Tooltip } from '../../shared/ui';
+import { Badge, Button, FlagIndicator, IconButton, Modal, Panel, StatCard, StatTone, StatusBadge, TabItem, Tabs, Tooltip } from '../../shared/ui';
 
 type QueueFilter = 'all' | CaseStatus | 'flagged';
 
@@ -49,12 +52,13 @@ const dateSort = (v: string): number => {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [NgTemplateOutlet, RouterLink, LucideAngularModule, DataTable, Cell, Button, FlagIndicator, IconButton, Modal, Panel, StatCard, StatusBadge, Tooltip],
+  imports: [NgTemplateOutlet, RouterLink, LucideAngularModule, DataTable, Cell, Badge, Button, FlagIndicator, IconButton, Modal, Panel, StatCard, StatusBadge, Tabs, Tooltip],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard.html'
 })
 export class Dashboard {
   protected readonly ws = inject(WorkspaceService);
+  protected readonly theme = inject(ThemeService);
   private readonly cases = inject(CaseService);
   private readonly router = inject(Router);
   private readonly queueEl = viewChild<ElementRef<HTMLElement>>('queueEl');
@@ -64,6 +68,16 @@ export class Dashboard {
   protected readonly highlight: string | undefined = history.state?.highlight;
   protected readonly filter = signal<QueueFilter>('all');
   protected readonly pendingTrash = signal<InboxItem | null>(null);
+
+  /** Evergreen layout: which of the three work lists is showing. */
+  protected readonly listTab = signal('queue');
+  protected readonly listTabs = computed<TabItem[]>(() => [
+    { id: 'queue', label: 'My Underwriter Work Queue', count: this.filteredQueue().length },
+    { id: 'secondary', label: 'Secondary Review', count: secondaryReviewItems.length },
+    { id: 'return', label: 'Return Email Receipt', count: returnEmailReceipts.length }
+  ]);
+  protected readonly unreplied = computed(() => this.ws.inbox().filter((i) => !i.replied).length);
+  protected readonly flaggedCases = computed(() => this.ws.queue().filter((i) => i.rush || i.rework));
 
   protected readonly today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   protected readonly greeting = (() => {
@@ -143,7 +157,7 @@ export class Dashboard {
   protected readonly queueColumns: Column<QueueItem>[] = [
     { key: 'rush', header: 'Rush', className: 'w-16', sortValue: (r) => (r.rush ? 1 : 0) },
     { key: 'rework', header: 'Rework', className: 'w-20', sortValue: (r) => (r.rework ? 1 : 0) },
-    { key: 'case', header: 'Case #', sortValue: (r) => r.caseNumber, value: (r) => r.caseNumber, className: 'tabular-nums' },
+    { key: 'case', header: 'Case #', sortValue: (r) => r.caseNumber, value: (r) => r.caseNumber, className: 'whitespace-nowrap tabular-nums' },
     { key: 'claimant', header: 'Claimant', sortValue: (r) => r.claimant },
     { key: 'dob', header: 'DOB', sortValue: (r) => r.dob, value: (r) => r.dob, className: 'tabular-nums' },
     { key: 'received', header: 'Date Received', sortValue: (r) => dateSort(r.dateReceived), value: (r) => r.dateReceived, className: 'whitespace-nowrap tabular-nums' },
@@ -190,7 +204,7 @@ export class Dashboard {
   protected readonly returnId = (r: ReturnEmailItem) => r.id;
   protected readonly returnText = (r: ReturnEmailItem) => `${r.from} ${r.subject} ${r.receivedOn}`;
 
-  protected readonly i = { ChartLineIcon, FlagIcon, MailIcon, ReplyIcon, Trash2Icon, XIcon };
+  protected readonly i = { ArrowRightIcon, ChartLineIcon, ChevronRightIcon, FlagIcon, MailIcon, ReplyIcon, Trash2Icon, XIcon };
 
   protected splitSender(value: string): [string, string | undefined] {
     const [name, email] = value.split(' (');
@@ -204,6 +218,11 @@ export class Dashboard {
   protected showQueue(f: QueueFilter): void {
     this.filter.update((cur) => (cur === f ? 'all' : f));
     this.scrollTo(this.queueEl());
+  }
+
+  protected openInbox(): void {
+    const first = this.ws.inbox()[0];
+    if (first) this.router.navigate(['/email', first.id]);
   }
 
   protected confirmTrash(): void {

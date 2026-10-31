@@ -1,3 +1,5 @@
+import type { ThemeId } from '../services/theme.service';
+
 export interface Swatch {
   token: string;
   hex: string;
@@ -5,7 +7,13 @@ export interface Swatch {
   onDark?: boolean;
 }
 
-export const colorGroups: {name: string;description: string;swatches: Swatch[];}[] = [
+export interface ColorGroup {
+  name: string;
+  description: string;
+  swatches: Swatch[];
+}
+
+const classicColorGroups: ColorGroup[] = [
 {
   name: 'Brand blue',
   description: 'Derived from the existing FlowRocket header blue. 600–700 carry white text at AA; 700 is the link color on white.',
@@ -44,6 +52,147 @@ export const colorGroups: {name: string;description: string;swatches: Swatch[];}
   { token: 'danger-50', hex: '#FDEFEF', usage: 'Error surface' }]
 
 }];
+
+
+const evergreenColorGroups: ColorGroup[] = [
+{
+  name: 'Brand green',
+  description: 'A deep teal-green for the Evergreen version. 600–900 carry white text at AA; 700 is the link color on white and 900 is the sidebar.',
+  swatches: [
+  { token: 'brand-50', hex: '#E2F0EE', usage: 'Row hover, selected rows' },
+  { token: 'brand-100', hex: '#CBE5E1', usage: 'Selected chips' },
+  { token: 'brand-200', hex: '#A5D2CC', usage: 'Info borders' },
+  { token: 'brand-500', hex: '#1A8179', usage: 'Focus ring, icons', onDark: true },
+  { token: 'brand-600', hex: '#0F6B66', usage: 'Primary button, active tab', onDark: true },
+  { token: 'brand-700', hex: '#0B5753', usage: 'Links, pressed', onDark: true },
+  { token: 'brand-800', hex: '#0A4A47', usage: 'Window titles', onDark: true },
+  { token: 'brand-900', hex: '#0B2A2C', usage: 'Sidebar, avatars', onDark: true }]
+
+},
+{
+  name: 'Ink neutrals',
+  description: 'Green-tinted neutrals for text, borders and surfaces. ink-400 is the lightest color allowed for any text, including placeholders.',
+  swatches: [
+  { token: 'canvas', hex: '#F3F5F4', usage: 'App background' },
+  { token: 'ink-50', hex: '#F5F7F6', usage: 'Table headers, toolbars' },
+  { token: 'ink-200', hex: '#DCE2E0', usage: 'Borders, dividers' },
+  { token: 'ink-400', hex: '#66736F', usage: 'Placeholder, disabled icons (4.9:1)', onDark: true },
+  { token: 'ink-500', hex: '#55625E', usage: 'Secondary text (6.4:1)', onDark: true },
+  { token: 'ink-700', hex: '#3D4B49', usage: 'Labels, headers', onDark: true },
+  { token: 'ink-900', hex: '#14201F', usage: 'Primary text (16.7:1)', onDark: true }]
+
+},
+{
+  name: 'Semantic',
+  description: 'Status meaning is always paired with a label or icon, never color alone. info is used for “Ready for UW” and replied states.',
+  swatches: [
+  { token: 'success-700', hex: '#1F6038', usage: 'Success text, Sent to broker', onDark: true },
+  { token: 'success-50', hex: '#E4F2E9', usage: 'Success surface' },
+  { token: 'warning-600', hex: '#996515', usage: 'Warning icons, avatars', onDark: true },
+  { token: 'warning-700', hex: '#7E5310', usage: 'Warning text', onDark: true },
+  { token: 'warning-50', hex: '#FBF1DE', usage: 'Needs-action surface' },
+  { token: 'danger-600', hex: '#B4323A', usage: 'Rush flag, rated age, destructive', onDark: true },
+  { token: 'danger-50', hex: '#FBE9EA', usage: 'Error surface' },
+  { token: 'info-700', hex: '#2D4684', usage: 'Informational status', onDark: true },
+  { token: 'info-50', hex: '#E8EDF8', usage: 'Informational surface' }]
+
+}];
+
+export const evergreenBlueColorGroups: ColorGroup[] = [
+{
+  name: 'Brand blue',
+  description: 'Corporate Blue palette for the Evergreen layout. Primary deep blue #005C92 carries white text at AA (7.1:1) and is also the sidebar surface; Accent Sky #03A1FF marks the active sidebar item; brand-500 is the focus ring and accent.',
+  swatches: [
+  { token: 'brand-50', hex: '#E8F2FA', usage: 'Row hover, selected rows' },
+  { token: 'brand-100', hex: '#CFE4F3', usage: 'Selected chips' },
+  { token: 'brand-200', hex: '#A4CAE8', usage: 'Info borders' },
+  { token: 'brand-500', hex: '#1081C5', usage: 'Focus ring, accents, icons', onDark: true },
+  { token: 'brand-600', hex: '#005C92', usage: 'Primary button, active tab, sidebar surface', onDark: true },
+  { token: 'brand-700', hex: '#004A78', usage: 'Links, pressed', onDark: true },
+  { token: 'brand-800', hex: '#003A60', usage: 'Window titles', onDark: true },
+  { token: 'brand-900', hex: '#082642', usage: 'Avatars, active-row text, marker', onDark: true },
+  { token: 'accent-sky', hex: '#03A1FF', usage: 'Sidebar active row (navy text, 5.5:1); not used for white text', onDark: false }]
+
+},
+{
+  name: 'Neutrals',
+  description: 'Cool grays for text, borders and surfaces on an #EEEEEE canvas. ink-400 is the lightest color allowed for any text.',
+  swatches: [
+  { token: 'canvas', hex: '#EEEEEE', usage: 'App background' },
+  { token: 'ink-50', hex: '#F5F6F8', usage: 'Table headers, toolbars' },
+  { token: 'ink-200', hex: '#DEE2E6', usage: 'Borders, dividers' },
+  { token: 'ink-400', hex: '#5A626A', usage: 'Placeholder, muted text (6.2:1 on white, 5.3:1 on canvas)', onDark: true },
+  { token: 'ink-500', hex: '#495057', usage: 'Secondary text', onDark: true },
+  { token: 'ink-700', hex: '#343A40', usage: 'Labels, headers', onDark: true },
+  { token: 'ink-900', hex: '#212529', usage: 'Body text', onDark: true }]
+
+},
+{
+  name: 'Status & action',
+  description: 'Status meaning is always paired with a label or icon. Bright success and warning hues are used as fills; darker steps carry text.',
+  swatches: [
+  { token: 'success-600', hex: '#1E7E34', usage: 'Success text, Sent to broker', onDark: true },
+  { token: 'success-500', hex: '#28A745', usage: 'Success marker' },
+  { token: 'warning-500', hex: '#FFC107', usage: 'Warning fill, nav marker' },
+  { token: 'warning-600', hex: '#856404', usage: 'Warning text', onDark: true },
+  { token: 'danger-500', hex: '#DC3545', usage: 'Danger, Delete, Clear', onDark: true },
+  { token: 'danger-600', hex: '#C82837', usage: 'Rush flag, errors', onDark: true },
+  { token: 'info-700', hex: '#004A78', usage: 'Informational status', onDark: true },
+  { token: 'info-50', hex: '#E8F2FA', usage: 'Informational surface' }]
+
+}];
+
+export interface ThemeDoc {
+  name: string;
+  colorGroups: ColorGroup[];
+  font: { name: string; credit: string; stack: string; mono?: string };
+  radii: [string, string, string][];
+  elevation: string;
+  navigation: string;
+}
+
+export const themeDocs: Record<ThemeId, ThemeDoc> = {
+  classic: {
+    name: 'Classic',
+    colorGroups: classicColorGroups,
+    font: { name: 'Inter', credit: 'Designed by Rasmus Andersson for screen interfaces · SIL Open Font License', stack: 'Inter, ui-sans-serif, system-ui, sans-serif' },
+    radii: [['rounded', '4px', 'Chips, toolbar buttons'], ['rounded-md', '6px', 'Inputs, buttons'], ['rounded-lg', '8px', 'Panels, cards'], ['rounded-xl', '12px', 'Dialogs']],
+    elevation: 'Radii stay small to keep the enterprise density, and shadows are limited to one hairline level plus one overlay level.',
+    navigation: 'The original two-tier blue header and per-record window bar are kept. Tone and spacing are refined, and every icon has a label.'
+  },
+  evergreen: {
+    name: 'Evergreen',
+    colorGroups: evergreenColorGroups,
+    font: { name: 'IBM Plex Sans', credit: 'Designed by Mike Abbink at IBM · SIL Open Font License', stack: "'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif", mono: "'IBM Plex Mono' for case numbers and identifiers" },
+    radii: [['rounded', '4px', 'Chips, toolbar buttons'], ['rounded-md', '6px', 'Inputs, buttons'], ['rounded-lg', '8px', 'Panels, cards'], ['rounded-xl', '10px', 'Cards, dialogs']],
+    elevation: 'Surfaces are flat: a 1px border does the work of a shadow. Only dialogs and floating menus lift off the page.',
+    navigation: 'A deep-teal sidebar replaces the two-tier header. Case screens gain a workspace header with the claimant identity, key figures and tabbed case navigation.'
+  }
+};
+
+export interface ThemeComparison {
+  area: string;
+  classic: string;
+  evergreen: string;
+}
+
+export const themeComparison: ThemeComparison[] = [
+{ area: 'Navigation', classic: 'Two-tier blue header with workspace bar', evergreen: 'Collapsible deep-teal sidebar with a slim top bar' },
+{ area: 'Home Workspace', classic: 'Four step cards, then stacked work queue, inbox and review tables', evergreen: 'Pipeline strip, tabbed work lists, and a rail with the inbox and rush / rework cases' },
+{ area: 'Email review', classic: 'Claimant search beside the email', evergreen: 'Three columns: inbox list, email reader, claimant search' },
+{ area: 'Case screens', classic: 'Window bar, title row and icon toolbar', evergreen: 'Workspace header with identity and figures, tabbed navigation, and a case progress rail' },
+{ area: 'Typography', classic: 'Inter', evergreen: 'IBM Plex Sans, with IBM Plex Mono for identifiers' },
+{ area: 'Shape & elevation', classic: 'Soft cards with raised shadows', evergreen: 'Flat, hairline-bordered surfaces' }];
+
+
+export const themeTokens: { token: string; classic: string; evergreen: string; usage: string }[] = [
+{ token: '--brand-600', classic: '#2369A8', evergreen: '#0F6B66', usage: 'Primary buttons, active tabs, header' },
+{ token: '--brand-900', classic: '#163B5C', evergreen: '#0B2A2C', usage: 'Deepest brand tone (Evergreen sidebar)' },
+{ token: '--canvas', classic: '#F3F6F9', evergreen: '#F3F5F4', usage: 'App background' },
+{ token: '--ink-900', classic: '#1B2733', evergreen: '#14201F', usage: 'Primary text' },
+{ token: '--radius-xl', classic: '12px', evergreen: '10px', usage: 'Cards and dialogs' },
+{ token: '--shadow-raised', classic: 'soft two-layer', evergreen: '1px hairline', usage: 'Panels and cards' },
+{ token: '--font-sans', classic: 'Inter', evergreen: 'IBM Plex Sans', usage: 'All interface text' }];
 
 
 export const typeScale: {name: string;spec: string;className: string;sample: string;usage: string;}[] = [

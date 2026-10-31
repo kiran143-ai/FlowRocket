@@ -6,6 +6,34 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script>
+    // Apply the saved version before first paint so switching never flashes. A shared link such as
+    // /reports?theme=evergreen selects that version, is remembered, and the parameter is then removed
+    // so it never interferes with routing.
+    try {
+      var ok = function (v) { return v === 'classic' || v === 'evergreen'; };
+      var url = new URL(location.href);
+      var t = url.searchParams.get('theme');
+      if (ok(t)) {
+        localStorage.setItem('flowrocket:theme', t);
+        url.searchParams.delete('theme');
+        history.replaceState(null, '', url.pathname + url.search + url.hash);
+      } else {
+        t = localStorage.getItem('flowrocket:theme');
+      }
+      if (ok(t)) document.documentElement.dataset.theme = t;
+      var pk = function (v) { return v === 'green' || v === 'blue'; };
+      var p = url.searchParams.get('palette');
+      if (pk(p)) {
+        localStorage.setItem('flowrocket:palette', p);
+        url.searchParams.delete('palette');
+        history.replaceState(null, '', url.pathname + url.search + url.hash);
+      } else {
+        p = localStorage.getItem('flowrocket:palette');
+      }
+      if (pk(p)) document.documentElement.dataset.palette = p;
+    } catch (e) {}
+  </script>
 </head>
 <body>
   <app-root></app-root>

@@ -14,6 +14,23 @@ Requires Node.js 20.19+, 22.12+ or 24+.
 
 **Live:** deployed on Vercel. `vercel.json` sets the build and rewrites every route to `index.html`, so deep links such as `/reports` and `/case/26-01867` work.
 
+## Versions: Classic and Evergreen
+
+The app ships in two looks with identical pages, data and workflows. Switch from the header
+(the **Classic | Evergreen** control), or open a link ending in `?theme=evergreen` / `?theme=classic`.
+The choice is remembered in `localStorage` (`flowrocket:theme`).
+
+- **Classic** – blue two-tier header, Inter. This is the original look and is unchanged.
+- **Evergreen** – deep-teal sidebar workspace, IBM Plex, flatter surfaces. It has its own layouts for
+  the Dashboard (pipeline strip, tabbed work lists, inbox rail), Email Review (three columns) and the
+  case screens (workspace header, tabs, progress rail).
+
+How it works: colours, radii, shadows and fonts are CSS variables in `src/styles.css`
+(`:root` = Classic, `:root[data-theme='evergreen']` = Evergreen). Tailwind reads them
+(`tailwind.config.js`), and `eg:` is a variant that applies a utility only in Evergreen.
+`ThemeService` holds the active version; layout differences branch on `theme.isEvergreen()`.
+The Design System page (`/design-system`) documents both and follows the active version.
+
 ## Stack
 
 - Angular 21, standalone components, signals, zoneless change detection, OnPush everywhere

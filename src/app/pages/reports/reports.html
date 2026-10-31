@@ -30,7 +30,7 @@
     <app-stat-card label="Avg. years rated up" [value]="'+' + avgUp().toFixed(1)" [icon]="i.TrendingUpIcon" tone="neutral" hint="Final rated age minus actual age" />
   </div>
 
-  <div class="grid items-start gap-5 2xl:grid-cols-[minmax(0,1fr)_320px]">
+  <div class="grid items-start gap-5 2xl:grid-cols-[minmax(0,1fr)_320px] eg:grid-cols-[minmax(0,1fr)] eg:2xl:grid-cols-[minmax(0,1fr)] eg:min-[1800px]:grid-cols-[minmax(0,1fr)_320px]">
     <app-panel heading="RA Confirmation Sheets" [icon]="i.FileTextIcon" [count]="rows().length" bodyClass="p-0">
       <div panelActions role="group" aria-label="Filter RA sheets" class="flex flex-wrap gap-1">
         @for (f of filters(); track f.id) {

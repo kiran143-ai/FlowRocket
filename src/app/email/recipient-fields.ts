@@ -11,7 +11,7 @@ import { Tooltip } from '../shared/ui/tooltip';
   imports: [Tooltip, FormsModule, LucideAngularModule, Control, SelectShell, RecipientInput],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <fieldset class="rounded-lg border border-ink-200 p-4">
+    <fieldset class="min-w-0 rounded-lg border border-ink-200 p-4">
       <legend class="px-1 text-sm font-semibold text-ink-900">Recipient(s)</legend>
       <div class="space-y-3">
         <p class="text-xs font-semibold text-ink-700">Email</p>
