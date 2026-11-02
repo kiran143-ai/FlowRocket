@@ -55,7 +55,7 @@ export class ThemeSwitcher {
   }
 }
 
-/** Colour palette for the Evergreen layout (Green or Corporate Blue). */
+/** Colour palette for the Evergreen layout (Green or SSTL Blue). */
 @Component({
   selector: 'app-palette-switcher',
   changeDetection: ChangeDetectionStrategy.OnPush,

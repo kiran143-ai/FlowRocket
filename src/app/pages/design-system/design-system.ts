@@ -83,7 +83,7 @@ export class DesignSystem {
   /** Everything on this page that describes the palette, type or layout follows the active version. */
   protected readonly doc = computed(() => {
     const d = themeDocs[this.theme.theme()];
-    return this.theme.isEvergreen() && this.theme.palette() === 'blue' ? { ...d, name: 'Evergreen · Corporate Blue', colorGroups: evergreenBlueColorGroups, navigation: 'A deep-blue sidebar (#005C92) with a sky-blue (#03A1FF) active item replaces the two-tier header. Case screens gain a workspace header with the claimant identity, key figures and tabbed case navigation.' } : d;
+    return this.theme.isEvergreen() && this.theme.palette() === 'blue' ? { ...d, name: 'Evergreen · SSTL Blue', colorGroups: evergreenBlueColorGroups, navigation: 'A deep-blue sidebar (#005C92) with a sky-blue (#03A1FF) active item replaces the two-tier header. Case screens gain a workspace header with the claimant identity, key figures and tabbed case navigation.' } : d;
   });
   private readonly content = viewChild.required<ElementRef<HTMLElement>>('content');
   /** Section currently in view, highlighted in the sidebar. */

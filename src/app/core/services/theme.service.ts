@@ -12,7 +12,7 @@ export type PaletteId = 'green' | 'blue';
 /** Colour palettes for the Evergreen layout. Classic ignores the palette. */
 export const PALETTES: { id: PaletteId; label: string; description: string; swatch: string }[] = [
   { id: 'green', label: 'Green', description: 'Deep teal-green palette', swatch: '#0F6B66' },
-  { id: 'blue', label: 'Corporate Blue', description: 'Deep blue palette with sky-blue accent', swatch: '#005C92' }
+  { id: 'blue', label: 'SSTL Blue', description: 'Deep blue palette with sky-blue accent', swatch: '#005C92' }
 ];
 
 const STORAGE_KEY = 'flowrocket:theme';

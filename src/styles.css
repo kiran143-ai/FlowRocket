@@ -121,7 +121,7 @@
   --info-700: 45 70 132;
 }
 
-/* Evergreen layout, "Corporate Blue" palette (primary #005C92, accent #03A1FF, canvas #EEEEEE).
+/* Evergreen layout, "SSTL Blue" palette (primary #005C92, accent #03A1FF, canvas #EEEEEE).
    Only colours and shadow tint change; layout, type and radii come from the block above. */
 :root[data-theme='evergreen'][data-palette='blue'] {
   --shadow-xs: 0 1px 0 rgba(8, 38, 66, 0.05);

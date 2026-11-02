@@ -101,7 +101,7 @@ const evergreenColorGroups: ColorGroup[] = [
 export const evergreenBlueColorGroups: ColorGroup[] = [
 {
   name: 'Brand blue',
-  description: 'Corporate Blue palette for the Evergreen layout. Primary deep blue #005C92 carries white text at AA (7.1:1) and is also the sidebar surface; Accent Sky #03A1FF marks the active sidebar item; brand-500 is the focus ring and accent.',
+  description: 'SSTL Blue palette for the Evergreen layout. Primary deep blue #005C92 carries white text at AA (7.1:1) and is also the sidebar surface; Accent Sky #03A1FF marks the active sidebar item; brand-500 is the focus ring and accent.',
   swatches: [
   { token: 'brand-50', hex: '#E8F2FA', usage: 'Row hover, selected rows' },
   { token: 'brand-100', hex: '#CFE4F3', usage: 'Selected chips' },
