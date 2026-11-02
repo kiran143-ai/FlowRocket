@@ -7,7 +7,7 @@ import { CASE_STAGES, caseStage } from '../core/utils/raSheet';
 import { Button } from '../shared/ui';
 import { caseNextStep } from './next-step';
 
-/** Evergreen case workspace: vertical progress through the workflow, with the next step beneath it. */
+/** SSTL case workspace: vertical progress through the workflow, with the next step beneath it. */
 @Component({
   selector: 'app-case-progress',
   imports: [LucideAngularModule, Button],

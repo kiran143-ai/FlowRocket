@@ -69,7 +69,7 @@ export class Dashboard {
   protected readonly filter = signal<QueueFilter>('all');
   protected readonly pendingTrash = signal<InboxItem | null>(null);
 
-  /** Evergreen layout: which of the three work lists is showing. */
+  /** SSTL layout: which of the three work lists is showing. */
   protected readonly listTab = signal('queue');
   protected readonly listTabs = computed<TabItem[]>(() => [
     { id: 'queue', label: 'My Underwriter Work Queue', count: this.filteredQueue().length },

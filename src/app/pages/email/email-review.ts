@@ -134,7 +134,7 @@ export class EmailReview {
   });
   protected readonly confirmTrash = signal(false);
 
-  /** Evergreen layout: the inbox list beside the reader. */
+  /** SSTL layout: the inbox list beside the reader. */
   protected readonly listFilter = signal<'all' | 'open' | 'replied'>('all');
   protected readonly listFilters = [
     { id: 'all', label: 'All' },

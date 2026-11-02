@@ -4,12 +4,12 @@ export type ThemeId = 'classic' | 'evergreen';
 
 export const THEMES: { id: ThemeId; label: string; description: string }[] = [
   { id: 'classic', label: 'Classic', description: 'Blue header with two-tier navigation' },
-  { id: 'evergreen', label: 'Evergreen', description: 'Green sidebar workspace layout' }
+  { id: 'evergreen', label: 'SSTL', description: 'Left-sidebar workspace layout' }
 ];
 
 export type PaletteId = 'green' | 'blue';
 
-/** Colour palettes for the Evergreen layout. Classic ignores the palette. */
+/** Colour palettes for the SSTL layout. Classic ignores the palette. */
 export const PALETTES: { id: PaletteId; label: string; description: string; swatch: string }[] = [
   { id: 'green', label: 'Green', description: 'Deep teal-green palette', swatch: '#0F6B66' },
   { id: 'blue', label: 'SSTL Blue', description: 'Deep blue palette with sky-blue accent', swatch: '#005C92' }

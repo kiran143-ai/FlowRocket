@@ -10,7 +10,7 @@ interface ToolbarItem {
   path: string;
   query?: Record<string, string>;
   label: string;
-  /** Short name for the Evergreen tab row. */
+  /** Short name for the SSTL tab row. */
   short: string;
   icon: LucideIconData;
   count?: string;

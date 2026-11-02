@@ -11,7 +11,7 @@ import { CaseToolbar } from './case-toolbar';
 
 /**
  * Frame for every case screen: page title, status and case navigation.
- * Classic: window bar, title row and an icon toolbar. Evergreen: a case workspace header with the
+ * Classic: window bar, title row and an icon toolbar. SSTL: a case workspace header with the
  * claimant identity, key figures and tabbed case navigation.
  * Slots: [titleAction] next to the title, [headerExtra] beside the case actions.
  */

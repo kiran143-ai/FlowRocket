@@ -65,7 +65,7 @@ export class AppShell {
   protected readonly onReports = computed(() => this.url().startsWith('/reports'));
   protected readonly onHome = computed(() => !this.onDesignSystem() && !this.onReports());
 
-  /** Evergreen sidebar: always an icon rail on narrow screens, and collapsible by the user above that. */
+  /** SSTL sidebar: always an icon rail on narrow screens, and collapsible by the user above that. */
   protected readonly narrow = signal(false);
   private readonly userCollapsed = signal(false);
   protected readonly collapsed = computed(() => this.narrow() || this.userCollapsed());

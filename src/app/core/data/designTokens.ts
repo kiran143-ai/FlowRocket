@@ -57,7 +57,7 @@ const classicColorGroups: ColorGroup[] = [
 const evergreenColorGroups: ColorGroup[] = [
 {
   name: 'Brand green',
-  description: 'A deep teal-green for the Evergreen version. 600–900 carry white text at AA; 700 is the link color on white and 900 is the sidebar.',
+  description: 'A deep teal-green for the SSTL version. 600–900 carry white text at AA; 700 is the link color on white and 900 is the sidebar.',
   swatches: [
   { token: 'brand-50', hex: '#E2F0EE', usage: 'Row hover, selected rows' },
   { token: 'brand-100', hex: '#CBE5E1', usage: 'Selected chips' },
@@ -101,7 +101,7 @@ const evergreenColorGroups: ColorGroup[] = [
 export const evergreenBlueColorGroups: ColorGroup[] = [
 {
   name: 'Brand blue',
-  description: 'SSTL Blue palette for the Evergreen layout. Primary deep blue #005C92 carries white text at AA (7.1:1) and is also the sidebar surface; Accent Sky #03A1FF marks the active sidebar item; brand-500 is the focus ring and accent.',
+  description: 'SSTL Blue palette for the SSTL layout. Primary deep blue #005C92 carries white text at AA (7.1:1) and is also the sidebar surface; Accent Sky #03A1FF marks the active sidebar item; brand-500 is the focus ring and accent.',
   swatches: [
   { token: 'brand-50', hex: '#E8F2FA', usage: 'Row hover, selected rows' },
   { token: 'brand-100', hex: '#CFE4F3', usage: 'Selected chips' },
@@ -161,7 +161,7 @@ export const themeDocs: Record<ThemeId, ThemeDoc> = {
     navigation: 'The original two-tier blue header and per-record window bar are kept. Tone and spacing are refined, and every icon has a label.'
   },
   evergreen: {
-    name: 'Evergreen',
+    name: 'SSTL',
     colorGroups: evergreenColorGroups,
     font: { name: 'IBM Plex Sans', credit: 'Designed by Mike Abbink at IBM · SIL Open Font License', stack: "'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif", mono: "'IBM Plex Mono' for case numbers and identifiers" },
     radii: [['rounded', '4px', 'Chips, toolbar buttons'], ['rounded-md', '6px', 'Inputs, buttons'], ['rounded-lg', '8px', 'Panels, cards'], ['rounded-xl', '10px', 'Cards, dialogs']],
@@ -187,7 +187,7 @@ export const themeComparison: ThemeComparison[] = [
 
 export const themeTokens: { token: string; classic: string; evergreen: string; usage: string }[] = [
 { token: '--brand-600', classic: '#2369A8', evergreen: '#0F6B66', usage: 'Primary buttons, active tabs, header' },
-{ token: '--brand-900', classic: '#163B5C', evergreen: '#0B2A2C', usage: 'Deepest brand tone (Evergreen sidebar)' },
+{ token: '--brand-900', classic: '#163B5C', evergreen: '#0B2A2C', usage: 'Deepest brand tone (SSTL sidebar)' },
 { token: '--canvas', classic: '#F3F6F9', evergreen: '#F3F5F4', usage: 'App background' },
 { token: '--ink-900', classic: '#1B2733', evergreen: '#14201F', usage: 'Primary text' },
 { token: '--radius-xl', classic: '12px', evergreen: '10px', usage: 'Cards and dialogs' },

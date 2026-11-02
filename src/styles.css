@@ -4,7 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Theme tokens: Classic is the original palette; Evergreen swaps colour, radius, shadow and type. */
+/* Theme tokens: Classic is the original palette; SSTL swaps colour, radius, shadow and type. */
 :root {
   color-scheme: light;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -63,7 +63,7 @@
   --info-700: 29 86 137;
 }
 
-/* Evergreen: deep-teal sidebar shell, flatter surfaces, IBM Plex type. */
+/* SSTL: deep-teal sidebar shell, flatter surfaces, IBM Plex type. */
 :root[data-theme='evergreen'] {
   --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -121,7 +121,7 @@
   --info-700: 45 70 132;
 }
 
-/* Evergreen layout, "SSTL Blue" palette (primary #005C92, accent #03A1FF, canvas #EEEEEE).
+/* SSTL layout, "SSTL Blue" palette (primary #005C92, accent #03A1FF, canvas #EEEEEE).
    Only colours and shadow tint change; layout, type and radii come from the block above. */
 :root[data-theme='evergreen'][data-palette='blue'] {
   --shadow-xs: 0 1px 0 rgba(8, 38, 66, 0.05);

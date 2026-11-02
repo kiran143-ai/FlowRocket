@@ -5,7 +5,7 @@ import { cn } from '../core/utils/cn';
 
 const swatch: Record<ThemeId, string> = { classic: '#2369A8', evergreen: '#0F6B66' };
 
-/** Segmented control that flips the whole app between the Classic and Evergreen versions. */
+/** Segmented control that flips the whole app between the Classic and SSTL versions. */
 @Component({
   selector: 'app-theme-switcher',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,7 +55,7 @@ export class ThemeSwitcher {
   }
 }
 
-/** Colour palette for the Evergreen layout (Green or SSTL Blue). */
+/** Colour palette for the SSTL layout (Green or SSTL Blue). */
 @Component({
   selector: 'app-palette-switcher',
   changeDetection: ChangeDetectionStrategy.OnPush,
