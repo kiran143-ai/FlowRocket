@@ -16,7 +16,7 @@ export interface ColorGroup {
 const classicColorGroups: ColorGroup[] = [
 {
   name: 'Brand blue',
-  description: 'Derived from the existing SSTL MediLife header blue. 600–700 carry white text at AA; 700 is the link color on white.',
+  description: 'Derived from the existing SSTL MedLink header blue. 600–700 carry white text at AA; 700 is the link color on white.',
   swatches: [
   { token: 'brand-50', hex: '#EFF6FC', usage: 'Row hover, info surfaces' },
   { token: 'brand-100', hex: '#DCEBF8', usage: 'Selected chips' },

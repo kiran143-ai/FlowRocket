@@ -1,6 +1,6 @@
-# SSTL MediLife
+# SSTL MedLink
 
-Redesign prototype for SSTL MediLife, the structured settlements medical underwriting workspace: work queue, broker email triage, claimant intake, rated-age calculation, RA Confirmation Sheet (PDF) and broker communication.
+Redesign prototype for SSTL MedLink, the structured settlements medical underwriting workspace: work queue, broker email triage, claimant intake, rated-age calculation, RA Confirmation Sheet (PDF) and broker communication.
 
 Built with **Angular 21** and **Tailwind CSS**.
 
@@ -51,7 +51,7 @@ src/app/
   shared/      UI kit: button[appButton], button[appIconButton], app-panel, app-modal, app-tabs,
                app-stat-card, [appTooltip], form controls (input[appControl], app-select, app-field),
                app-data-table
-  layout/      app shell (two-tier header with SSTL MediLife logo) and window bar
+  layout/      app shell (two-tier header with SSTL MedLink logo) and window bar
   case/        case layout, toolbar, timeline, Activity Sheet panels, case overview
   email/       email viewer, claimant search, recipient chips, rich text editor
   documents/   PDF viewer, RA confirmation page, scanned / Form 461 pages

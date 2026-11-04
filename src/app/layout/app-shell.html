@@ -11,7 +11,7 @@
       <div class="relative flex h-14 shrink-0 items-center border-b border-white/10" [class.pr-3]="!collapsed() && !narrow()">
         <a
           routerLink="/"
-          aria-label="SSTL MediLife — Dashboard"
+          aria-label="SSTL MedLink — Dashboard"
           class="focus-ring flex h-full min-w-0 flex-1 items-center gap-3 px-4 focus-visible:ring-inset focus-visible:ring-white"
           [class.justify-center]="collapsed()"
           [class.px-0]="collapsed()">
@@ -20,8 +20,8 @@
           </span>
           @if (!collapsed()) {
             <span class="min-w-0 leading-tight">
-              <span class="block text-[15px] font-semibold tracking-tight">SSTL MediLife</span>
-              <span class="block text-xs text-white/60 blue:text-white/85">Medical Underwriting</span>
+              <span class="block text-[15px] font-semibold tracking-tight">SSTL MedLink</span>
+              <span class="block text-xs text-white/60 blue:text-white/85">Underwriting, linked</span>
             </span>
           }
         </a>
@@ -100,7 +100,7 @@
     @if (theme.isEvergreen()) {
       <header class="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-ink-200 bg-white px-4 lg:px-6">
         <form role="search" class="relative w-full max-w-xl flex-1" (submit)="$event.preventDefault()">
-          <label for="global-search" class="sr-only">Search SSTL MediLife</label>
+          <label for="global-search" class="sr-only">Search SSTL MedLink</label>
           <lucide-icon [img]="icons.SearchIcon" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-500" aria-hidden="true" />
           <input
             id="global-search"
@@ -120,12 +120,12 @@
       <div class="flex h-12 items-center gap-2 bg-brand-600 px-3 text-white lg:px-4">
         <a
           routerLink="/"
-          aria-label="SSTL MediLife — Home Workspace"
+          aria-label="SSTL MedLink — Home Workspace"
           class="focus-ring group -ml-1 flex shrink-0 items-center gap-2.5 rounded-lg py-1 pl-1 pr-2 focus-visible:ring-white focus-visible:ring-offset-brand-600">
           <span class="grid h-8 w-8 place-items-center rounded-lg bg-white text-brand-600 shadow-sm ring-1 ring-black/5 transition-transform duration-200 group-hover:-translate-y-0.5" aria-hidden="true">
             <app-logo-mark />
           </span>
-          <span class="text-[19px] font-bold leading-none tracking-tight text-white" aria-hidden="true">SSTL <span class="text-brand-100">MediLife</span></span>
+          <span class="text-[19px] font-bold leading-none tracking-tight text-white" aria-hidden="true">SSTL <span class="text-brand-100">MedLink</span></span>
         </a>
         <span class="mx-2 hidden h-6 w-px bg-white/25 sm:block" aria-hidden="true"></span>
         <nav aria-label="Primary" class="flex items-center gap-0.5">
@@ -140,7 +140,7 @@
         </nav>
 
         <form role="search" class="relative mx-auto hidden w-full max-w-md flex-1 md:block" (submit)="$event.preventDefault()">
-          <label for="global-search" class="sr-only">Search SSTL MediLife</label>
+          <label for="global-search" class="sr-only">Search SSTL MedLink</label>
           <lucide-icon [img]="icons.SearchIcon" class="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" aria-hidden="true" />
           <input
             id="global-search"
