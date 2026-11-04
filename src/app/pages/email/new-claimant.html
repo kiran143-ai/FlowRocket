@@ -1,8 +1,8 @@
 @if (item(); as item) {
   <div class="flex min-h-[calc(100vh-88px)] flex-col eg:min-h-[calc(100vh-56px)]">
     <app-window-bar [heading]="item.subject" [icon]="i.MailIcon" />
-    <div class="grid flex-1 bg-white eg:grid-cols-[minmax(0,1fr)] xl:grid-cols-[minmax(0,720px)_minmax(0,1fr)] eg:xl:grid-cols-[minmax(0,1fr)] eg:min-[1500px]:grid-cols-[minmax(0,720px)_minmax(0,1fr)]">
-      <form novalidate (ngSubmit)="submit('close')" class="min-w-0 border-b border-ink-200 xl:border-b-0 xl:border-r">
+    <div class="grid flex-1 bg-white eg:grid-cols-[minmax(0,1fr)] xl:grid-cols-[minmax(0,720px)_minmax(0,1fr)] eg:xl:grid-cols-[minmax(0,1fr)] eg:min-[1500px]:grid-cols-[minmax(0,1fr)_minmax(0,720px)]">
+      <form novalidate (ngSubmit)="submit('close')" class="min-w-0 border-b border-ink-200 xl:border-b-0 xl:border-r eg:order-2 eg:min-[1500px]:border-l eg:min-[1500px]:border-r-0">
         <div class="flex items-center justify-between border-b border-ink-200 bg-ink-50 px-4 py-2 lg:px-6">
           <h1 class="text-sm font-semibold text-ink-900">Claimant Information</h1>
           <button appIconButton label="Claimant options" size="sm" [icon]="i.MenuIcon"></button>
@@ -178,7 +178,7 @@
         </div>
       </form>
 
-      <div class="min-w-0">
+      <div class="min-w-0 eg:order-1">
         <app-email-viewer [inbox]="item" [email]="email()!" compact (reply)="reply($event)" (trash)="cancel()" (openAttachment)="openAttachment($event.id)" />
       </div>
     </div>
