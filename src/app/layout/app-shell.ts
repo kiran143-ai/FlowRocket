@@ -22,7 +22,6 @@ import {
   PaletteIcon,
   PanelLeftCloseIcon,
   PanelLeftOpenIcon,
-  RocketIcon,
   SearchIcon,
   SendIcon,
   UserIcon,
@@ -34,6 +33,7 @@ import { ThemeService } from '../core/services/theme.service';
 import { WorkspaceService } from '../core/services/workspace.service';
 import { cn } from '../core/utils/cn';
 import { Avatar, IconButton } from '../shared/ui';
+import { LogoMark } from './logo-mark';
 import { PaletteSwitcher, ThemeSwitcher } from './theme-switcher';
 
 const navText =
@@ -53,7 +53,7 @@ interface SideLink {
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, RouterLink, LucideAngularModule, Avatar, IconButton, ThemeSwitcher, PaletteSwitcher],
+  imports: [RouterOutlet, RouterLink, LucideAngularModule, Avatar, IconButton, ThemeSwitcher, PaletteSwitcher, LogoMark],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app-shell.html'
 })
@@ -129,7 +129,6 @@ export class AppShell {
     PaletteIcon,
     PanelLeftCloseIcon,
     PanelLeftOpenIcon,
-    RocketIcon,
     SearchIcon,
     UserIcon
   };

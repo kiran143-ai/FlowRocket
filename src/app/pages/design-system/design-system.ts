@@ -22,6 +22,7 @@ import {
   XIcon
 } from 'lucide-angular';
 import { CaseToolbar } from '../../case/case-toolbar';
+import { LogoMark } from '../../layout/logo-mark';
 import { PaletteSwitcher, ThemeSwitcher } from '../../layout/theme-switcher';
 import { a11yGuidelines, evergreenBlueColorGroups, flaggedChanges, spacingScale, themeComparison, themeDocs, themeTokens, typeScale } from '../../core/data/designTokens';
 import { ThemeService } from '../../core/services/theme.service';
@@ -56,6 +57,7 @@ import {
     CaseToolbar,
     ThemeSwitcher,
     PaletteSwitcher,
+    LogoMark,
     DataTable,
     Cell,
     Alert,
