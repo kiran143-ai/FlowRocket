@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-/** SSTL MedLink mark: a medical cross built from linked nodes (hub and four connections). Takes the surrounding text colour. */
+/** SSTL Medify mark: a medical cross built from linked nodes (hub and four connections). Takes the surrounding text colour. */
 @Component({
   selector: 'app-logo-mark',
   changeDetection: ChangeDetectionStrategy.OnPush,
